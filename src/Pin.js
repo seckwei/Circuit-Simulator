@@ -8,8 +8,9 @@ class Pin {
 	parent : Component
 	index : number
 
-	constructor() {
-		
+	constructor(parent: Component, index: number) {
+		this.parent = parent;
+		this.index = index;
 	}
 }
 
