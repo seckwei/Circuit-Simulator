@@ -1,7 +1,6 @@
 // @flow
 
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js');
+const { Component, Pin } = require('./Component.js');
 
 class CurrentSource extends Component {
     constructor(initCurrent: number = 5) {

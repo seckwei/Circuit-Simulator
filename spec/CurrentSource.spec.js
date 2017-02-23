@@ -1,5 +1,5 @@
 const CurrentSource = require('../src/CurrentSource.js'),
-    Pin = require('../src/Pin.js');
+   { Pin } = require('../src/Component.js');
 
 describe('Current Source', () => {
 

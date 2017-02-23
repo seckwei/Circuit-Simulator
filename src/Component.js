@@ -1,6 +1,20 @@
 // @flow
 
-const Pin = require('./Pin.js');
+const Matrix = require('./Matrix.js');
+
+class Pin {
+	position : Array<Array<number>>
+	visited : boolean
+	parent : Component
+	index : number
+
+	constructor(parent: Component, index: number) {
+		this.parent = parent;
+		this.index = index;
+	}
+}
+
+module.exports.Pin = Pin;
 
 class Component {
 
@@ -35,4 +49,4 @@ class Component {
 
 Component.idCount = 0;
 
-module.exports = Component;
+module.exports.Component = Component;
