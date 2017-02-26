@@ -1,33 +1,29 @@
 // @flow
 
 /**
- * @class Matrix
- * 
  * Instead of inheriting from Array type, I wrapped an
  * array in Matrix class. Array inheritance is still not
  * supported properly in transpilation. The problem I had 
  * is that the inherited Array will always be returned,
  * rather than the derived's instance.
  * See: https://babeljs.io/docs/usage/caveats/
+ * 
  */
-
 class Matrix {
 
-    /**
-     * @prop data
-     * @type {number[][]}
-     * @memberOf Matrix
-     */
     data: number[][];
 
     /**
      * Creates an instance of Matrix.
      * @param {number} [row=undefined] 
      * @param {number} [col=undefined] 
-     * 
-     * @memberOf Matrix
      */
     constructor(row: ?number = undefined, col: ?number = undefined) {
+
+        /**
+         * Representation of the matrix
+         * @type {number[][]}
+         */
         this.data = [];
 
         if(Number.isInteger(row)) {
@@ -47,11 +43,9 @@ class Matrix {
     }
 
     /**
-     * @method addRow
-     * 
+     * Adds a 0-filled row to the matrix
+     * @public
      * @param {number} [amount]
-     * 
-     * @memberOf Matrix
      */
     addRow(amount: ?number): void {
         // If this matrix has at least one row
@@ -77,11 +71,9 @@ class Matrix {
     }
 
     /**
-     * @method addCol
-     * 
+     * Adds a 0-filled column to the matrix
+     * @public
      * @param {number} [amount]
-     * 
-     * @memberOf Matrix
      */
     addCol(amount: ?number): void {
         // If this matrix has at least one row
@@ -101,12 +93,9 @@ class Matrix {
     }
 
     /**
-     * @method rowToCol 
-     * 
+     * Converts row matrix to column matrix
      * @static
-     * @param {number[]} row 
-     * 
-     * @memberOf Matrix
+     * @param {number[]} row
      */
     static rowToCol(row: number[]): number[][] {
         return row.map(num => [num]);

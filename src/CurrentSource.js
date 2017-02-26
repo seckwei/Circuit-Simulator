@@ -2,7 +2,15 @@
 
 const { Component, Pin } = require('./Component.js');
 
+/**
+ * CurrentSource class
+ */
 class CurrentSource extends Component {
+
+    /**
+     * Creates an instance of CurrentSource.
+     * @param {number} [initCurrent=5] 
+     */
     constructor(initCurrent: number = 5) {
         super('I');
         this.controlled = { I: initCurrent };

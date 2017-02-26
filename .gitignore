@@ -38,10 +38,5 @@ jspm_packages
 dist/
 
 # Doc files
-doc/*.html
-doc/**/*.css
-doc/**/*.js
-doc/**/*.svg
-doc/**/*.eot
-doc/**/*.woff
-doc/**/*.txt
+doc/
+!doc/esdoc.json
