@@ -4,4 +4,5 @@ const Traverser_spec = require('./Traverser.spec'),
     VoltageSource_spec = require('./VoltageSource.spec'),
     CurrentSource_spec = require('./CurrentSource.spec'),
     Resistor_spec = require('./Resistor.spec'),
-    Wire_spec = require('./Wire.spec');
+    Wire_spec = require('./Wire.spec'),
+    Ground_spec = require('./Ground.spec');
