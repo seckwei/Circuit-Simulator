@@ -1,6 +1,7 @@
 // @flow
 
-const { Component, Pin } = require('./Component.js');
+const { Component, Pin } = require('./Component.js'),
+    ComponentType = require('./ComponentType.js');;
 
 /**
  * Resistor class
@@ -13,6 +14,7 @@ class Resistor extends Component {
      */
     constructor(initResistance: number = 5) {
         super('R');
+        this.type = ComponentType.TYPE_RESISTOR;
         this.controlled = { R: initResistance };
         this.dependant = { I: undefined, V: undefined };
         this.pins = [new Pin(this, 0), new Pin(this, 1)];

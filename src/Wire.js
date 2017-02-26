@@ -1,19 +1,21 @@
 // @flow
 
-const { Component, Pin } = require('./Component.js');
+const { Pin } = require('./Component.js'),
+    VoltageSource = require('./VoltageSource.js'),
+    ComponentType = require('./ComponentType.js');
 
 /**
  * Wire class
  * A zero voltage source
  */
-class Wire extends Component {
+class Wire extends VoltageSource {
 
     /**
      * Creates an instance of Wire.
      */
     constructor() {
-        super('W');
-        this.controlled = { V: 0 };
+        super(0, 'W');
+        this.type = ComponentType.TYPE_CONNECTOR;
         this.dependant = { V: undefined, I: undefined };
         this.pins = [new Pin(this, 0), new Pin(this, 1)];
     }

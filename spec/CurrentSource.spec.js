@@ -1,5 +1,6 @@
 const CurrentSource = require('../src/CurrentSource.js'),
-   { Pin } = require('../src/Component.js');
+   { Pin } = require('../src/Component.js'),
+   ComponentType = require('../src/ComponentType.js');
 
 describe('Current Source', () => {
 
@@ -23,7 +24,11 @@ describe('Current Source', () => {
 
             expect(num2 - num).toBe(1);
         });
-
+        
+        it('should have type of Source', () => {
+            expect(I.type).toBe(ComponentType.TYPE_SOURCE);
+        });
+            
         it('should have current in controlled object field', () => {
             expect(Object.keys(I.controlled)).toContain("I");
             expect(Object.keys(I.dependant)).not.toContain("I");

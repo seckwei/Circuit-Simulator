@@ -1,5 +1,6 @@
 const VoltageSource = require('../src/VoltageSource.js'),
-   { Pin } = require('../src/Component.js');
+   { Pin } = require('../src/Component.js'),
+   ComponentType = require('../src/ComponentType.js');;
 
 describe('Voltage Source', () => {
 
@@ -22,6 +23,10 @@ describe('Voltage Source', () => {
                 num2 = parseInt(V3.id.match(intRegex)[0]);
 
             expect(num2 - num).toBe(1);
+        });
+        
+        it('should have type of Source', () => {
+            expect(V.type).toBe(ComponentType.TYPE_SOURCE);
         });
 
         it('should have voltage in controlled object field', () => {

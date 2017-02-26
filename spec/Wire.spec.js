@@ -1,5 +1,6 @@
 const Wire = require('../src/Wire.js'),
-   { Pin } = require('../src/Component.js');
+   { Pin } = require('../src/Component.js'),
+   ComponentType = require('../src/ComponentType.js');;
 
 describe('Wire', () => {
 
@@ -22,6 +23,10 @@ describe('Wire', () => {
                 num2 = parseInt(W3.id.match(intRegex)[0]);
 
             expect(num2 - num).toBe(1);
+        });
+        
+        it('should have type of Connector', () => {
+            expect(W.type).toBe(ComponentType.TYPE_CONNECTOR);
         });
 
         it('should have voltage in BOTH controlled and dependant object field', () => {

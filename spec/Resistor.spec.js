@@ -1,5 +1,6 @@
 const Resistor = require('../src/Resistor.js'),
-   { Pin } = require('../src/Component.js');
+   { Pin } = require('../src/Component.js'),
+   ComponentType = require('../src/ComponentType.js');;
 
 describe('Resistor', () => {
 
@@ -22,6 +23,10 @@ describe('Resistor', () => {
                 num2 = parseInt(R3.id.match(intRegex)[0]);
 
             expect(num2 - num).toBe(1);
+        });
+        
+        it('should have type of Resistor', () => {
+            expect(R.type).toBe(ComponentType.TYPE_RESISTOR);
         });
 
         it('should have resistance in controlled object field', () => {
