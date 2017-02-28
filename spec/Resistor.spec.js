@@ -1,6 +1,7 @@
 const Resistor = require('../src/Resistor.js'),
    { Pin } = require('../src/Component.js'),
-   ComponentType = require('../src/ComponentType.js');;
+   ComponentType = require('../src/ComponentType.js'),
+   Matrix = require('../src/Matrix.js');
 
 describe('Resistor', () => {
 
@@ -68,8 +69,61 @@ describe('Resistor', () => {
     });
 
     describe('stamp(matrixY, matrixJ)', () => {
-        it('should stamp only on matrixY', () => {
-            fail();
+
+        let Y, J;
+        let Ohm = 10,
+            G = 1/Ohm;
+        beforeEach(() => {
+            Y = new Matrix(3);      // 3x3
+            J = new Matrix(3, 1);   // 3x1
+        });            
+
+        it('should not stamp on matrixJ', () => {
+            R.stamp(Y, J);
+            expect(J.data).toEqual([
+                [0],
+                [0],
+                [0]
+            ]);
         });
-    })
+        
+        it('should stamp matrixY in the correct cells', () => {
+            R.controlled.R = Ohm;
+            R.nodes = [1,2];
+            R.stamp(Y, J);
+
+            expect(Y.data).toEqual([
+                [0,  0,  0],
+                [0,  G, -G],
+                [0, -G,  G]
+            ]);
+            expect(J.data).toEqual([
+                [0],
+                [0],
+                [0]
+            ]);
+        });
+
+        it('should stamp multiple components in matrixY in the correct cells', () => {
+            R.controlled.R = Ohm;
+            R.nodes = [1,2];
+            R.stamp(Y, J);
+
+            let R2 = new Resistor(Ohm);
+            R2.nodes = [0,1];
+            R2.stamp(Y, J);
+
+            expect(Y.data).toEqual([
+                [ G,  -G,  0],
+                [-G, G+G, -G],
+                [ 0,  -G,  G]
+            ]);
+            expect(J.data).toEqual([
+                [0],
+                [0],
+                [0]
+            ]);
+        });
+            
+    });
 });

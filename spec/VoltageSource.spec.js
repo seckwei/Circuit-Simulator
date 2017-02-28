@@ -1,6 +1,7 @@
 const VoltageSource = require('../src/VoltageSource.js'),
    { Pin } = require('../src/Component.js'),
-   ComponentType = require('../src/ComponentType.js');;
+   ComponentType = require('../src/ComponentType.js'),
+   Matrix = require('../src/Matrix.js');
 
 describe('Voltage Source', () => {
 
@@ -66,8 +67,61 @@ describe('Voltage Source', () => {
     });
 
     describe('stamp(matrixY, matrixJ)', () => {
-        it('should stamp only on matrixY and matrixJ', () => {
-            fail();
+
+        let Y, J;
+        let Volt = 8;
+
+        beforeEach(() => {
+            Y = new Matrix(5);
+            J = new Matrix(5,1);
         });
-    })
+
+        it('should stamp correctly on matrixY and matrixJ', () => {
+            V.controlled.V = Volt;
+            V.nodes = [1,2];
+            V.stamp(Y, J);
+
+            expect(Y.data).toEqual([
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 0,-1],
+                [0, 0, 0, 0, 0],
+                [0, 1,-1, 0, 0]
+            ]);
+
+            expect(J.data).toEqual([
+                [0],
+                [0],
+                [0],
+                [0],
+                [Volt]
+            ]);
+        });
+
+        it('should stamp two voltage sources correctly on matrixY and matrixJ', () => {
+            V.controlled.V = Volt;
+            V.nodes = [1,2];
+            V.stamp(Y, J);
+
+            let V2 = new VoltageSource(Volt);
+            V2.nodes = [2,3];
+            V2.stamp(Y, J);
+
+            expect(Y.data).toEqual([
+                [0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1],
+                [0, 0, 0, 0,-1],
+                [0, 0, 0, 0, 0],
+                [0, 1,-1, 0, 0]
+            ]);
+
+            expect(J.data).toEqual([
+                [0],
+                [0],
+                [0],
+                [0],
+                [Volt]
+            ]);
+        });
+    });
 });

@@ -1,6 +1,7 @@
 const CurrentSource = require('../src/CurrentSource.js'),
    { Pin } = require('../src/Component.js'),
-   ComponentType = require('../src/ComponentType.js');
+   ComponentType = require('../src/ComponentType.js'),
+   Matrix = require('../src/Matrix.js');
 
 describe('Current Source', () => {
 
@@ -66,8 +67,61 @@ describe('Current Source', () => {
     });
 
     describe('stamp(matrixY, matrixJ)', () => {
-        it('should stamp only on matrixJ', () => {
-            fail();
+        
+        let Y, J;
+        let Amp = 7;
+
+        beforeEach(() => {
+            Y = new Matrix(3);      // 3x3
+            J = new Matrix(3, 1);   // 3x1
         });
-    })
+
+        it('should not stamp on matrixY', () => {
+            I.stamp(Y, J);
+            expect(Y.data).toEqual([
+                [0],
+                [0],
+                [0]
+            ]);
+        });
+        
+        it('should stamp matrixJ in the correct cells', () => {
+            I.controlled.I = Amp;
+            I.nodes = [1,2];
+            I.stamp(Y, J);
+
+            expect(Y.data).toEqual([
+                [0,0,0],
+                [0,0,0],
+                [0,0,0]
+            ]);
+            expect(J.data).toEqual([
+                [0],
+                [-Amp],
+                [Amp]
+            ]);
+        });
+        
+        it('should stamp multiple components in matrixJ in the correct cells', () => {
+            I.controlled.I = Amp;
+            I.nodes = [1,2];
+            I.stamp(Y, J);
+
+            let I2 = new CurrentSource(Amp);
+            I2.nodes = [1,2];
+            I2.stamp(Y, J);
+
+            expect(Y.data).toEqual([
+                [0,0,0],
+                [0,0,0],
+                [0,0,0]
+            ]);
+            expect(J.data).toEqual([
+                [0],
+                [-Amp-Amp],
+                [Amp+Amp]
+            ]);
+        });
+            
+    });
 });
