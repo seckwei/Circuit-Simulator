@@ -1,12 +1,14 @@
 // @flow
 
 const { Component, Pin } = require('./Component.js'),
-    ComponentType = require('./ComponentType.js');;
+    ComponentType = require('./ComponentType.js');
 
 /**
  * VoltageSource class
  */
 class VoltageSource extends Component {
+
+    vSourceNum: number;
 
     /**
      * Creates an instance of VoltageSource.
@@ -19,6 +21,29 @@ class VoltageSource extends Component {
         this.controlled = { V: initVoltage };
         this.dependant = { I: undefined };
         this.pins = [new Pin(this, 0), new Pin(this, 1)];
+
+        /**
+         * Denotes the n-th voltage source. This is so that we know
+         * which row and col of the Y and J matrices to stamp.
+         * @type {number}
+         */
+        this.vSourceNum = 0;
+    }
+
+    /**
+     * Stamps the matrices Y and J
+     * @param {Matrix} matrixY 
+     * @param {Matrix} matrixJ
+     */
+    stamp(matrixY: Matrix, matrixJ: Matrix):void {
+        const from = this.nodes[0],
+            to = this.nodes[1],
+            vSourceIndex = matrixY.data.length - this.vSourceNum;
+
+        matrixY.data[vSourceIndex][from] = matrixY.data[from][vSourceIndex] = 1;
+        matrixY.data[vSourceIndex][to] = matrixY.data[to][vSourceIndex] = -1;
+
+        matrixJ.data[vSourceIndex][0] = this.controlled.V
     }
 }
 

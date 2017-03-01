@@ -72,24 +72,29 @@ describe('Voltage Source', () => {
         let Volt = 8;
 
         beforeEach(() => {
-            Y = new Matrix(5);
-            J = new Matrix(5,1);
+            Y = new Matrix(7);
+            J = new Matrix(7,1);
         });
 
         it('should stamp correctly on matrixY and matrixJ', () => {
             V.controlled.V = Volt;
             V.nodes = [1,2];
+            V.vSourceNum = 1;
             V.stamp(Y, J);
 
             expect(Y.data).toEqual([
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1],
-                [0, 0, 0, 0,-1],
-                [0, 0, 0, 0, 0],
-                [0, 1,-1, 0, 0]
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0, 0,-1],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 1,-1, 0, 0, 0, 0]
             ]);
 
             expect(J.data).toEqual([
+                [0],
+                [0],
                 [0],
                 [0],
                 [0],
@@ -101,18 +106,22 @@ describe('Voltage Source', () => {
         it('should stamp two voltage sources correctly on matrixY and matrixJ', () => {
             V.controlled.V = Volt;
             V.nodes = [1,2];
+            V.vSourceNum = 1;
             V.stamp(Y, J);
 
             let V2 = new VoltageSource(Volt);
             V2.nodes = [2,3];
+            V2.vSourceNum = 2;
             V2.stamp(Y, J);
 
             expect(Y.data).toEqual([
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1],
-                [0, 0, 0, 0,-1],
-                [0, 0, 0, 0, 0],
-                [0, 1,-1, 0, 0]
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0, 1,-1],
+                [0, 0, 0, 0, 0,-1, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1,-1, 0, 0, 0],
+                [0, 1,-1, 0, 0, 0, 0]
             ]);
 
             expect(J.data).toEqual([
@@ -120,6 +129,8 @@ describe('Voltage Source', () => {
                 [0],
                 [0],
                 [0],
+                [0],
+                [Volt],
                 [Volt]
             ]);
         });
