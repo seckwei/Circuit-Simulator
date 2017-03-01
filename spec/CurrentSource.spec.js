@@ -77,11 +77,12 @@ describe('Current Source', () => {
         });
 
         it('should not stamp on matrixY', () => {
+            I.nodes = [1,2];
             I.stamp(Y, J);
             expect(Y.data).toEqual([
-                [0],
-                [0],
-                [0]
+                [0,0,0],
+                [0,0,0],
+                [0,0,0]
             ]);
         });
         

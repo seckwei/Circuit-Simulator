@@ -1,7 +1,7 @@
 const Wire = require('../src/Wire.js'),
    { Pin } = require('../src/Component.js'),
    ComponentType = require('../src/ComponentType.js'),
-   Matrix = require('./src/Matrix.js');
+   Matrix = require('../src/Matrix.js');
 
 describe('Wire', () => {
 
@@ -60,23 +60,28 @@ describe('Wire', () => {
 
         let Y, J;
         beforeEach(() => {
-            Y = new Matrix(5);
-            J = new Matrix(5,1);
+            Y = new Matrix(7);
+            J = new Matrix(7,1);
         });
 
         it('should stamp correctly on matrixY and matrixJ', () => {
             W.nodes = [1,2];
+            W.vSourceNum = 1;
             W.stamp(Y, J);
 
             expect(Y.data).toEqual([
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1],
-                [0, 0, 0, 0,-1],
-                [0, 0, 0, 0, 0],
-                [0, 1,-1, 0, 0]
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0, 0,-1],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 1,-1, 0, 0, 0, 0]
             ]);
 
             expect(J.data).toEqual([
+                [0],
+                [0],
                 [0],
                 [0],
                 [0],
@@ -87,18 +92,22 @@ describe('Wire', () => {
 
         it('should stamp two voltage sources correctly on matrixY and matrixJ', () => {
             W.nodes = [1,2];
+            W.vSourceNum = 1;
             W.stamp(Y, J);
 
-            let W2 = new VoltageSource(Volt);
+            let W2 = new Wire();
             W2.nodes = [2,3];
+            W2.vSourceNum = 2;
             W2.stamp(Y, J);
 
             expect(Y.data).toEqual([
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1],
-                [0, 0, 0, 0,-1],
-                [0, 0, 0, 0, 0],
-                [0, 1,-1, 0, 0]
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0, 1,-1],
+                [0, 0, 0, 0, 0,-1, 0],
+                [0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1,-1, 0, 0, 0],
+                [0, 1,-1, 0, 0, 0, 0]
             ]);
 
             expect(J.data).toEqual([
@@ -106,7 +115,10 @@ describe('Wire', () => {
                 [0],
                 [0],
                 [0],
+                [0],
+                [0],
                 [0]
             ]);
         });
+    });
 });

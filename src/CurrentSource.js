@@ -19,6 +19,15 @@ class CurrentSource extends Component {
         this.dependant = { V: undefined };
         this.pins = [new Pin(this, 0), new Pin(this, 1)];
     }
+
+    stamp(matrixY: Matrix, matrixJ: Matrix):void {
+        const from = this.nodes[0],
+            to = this.nodes[1],
+            I = this.controlled.I;
+
+        matrixJ.data[from][0] += -I;
+        matrixJ.data[to][0] += I;
+    }
 }
 
 module.exports = CurrentSource;

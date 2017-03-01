@@ -79,6 +79,7 @@ describe('Resistor', () => {
         });            
 
         it('should not stamp on matrixJ', () => {
+            R.nodes = [1,2];
             R.stamp(Y, J);
             expect(J.data).toEqual([
                 [0],
