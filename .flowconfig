@@ -1,8 +1,10 @@
 [ignore]
 ./node_modules
+./doc
 
 [include]
 
 [libs]
+./src/Matrix.js
 
 [options]
