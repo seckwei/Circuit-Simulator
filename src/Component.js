@@ -1,13 +1,11 @@
 // @flow
 
-const Matrix = require('./Matrix.js');
-
 /**
  * Pin class
  */
 class Pin {
     
-	position : number[][]|null
+	position : number[]|null
 	visited : boolean
 	parent : Component
 	index : number
@@ -114,6 +112,17 @@ class Component {
          * @type {number[]}
          */
         this.nodes = [];
+    }
+
+    /** 
+     * Sets the position of this components pins.
+     * First item for pin0, Second for pin1, ... and so on.
+     * @param {number[][]} positions
+     */
+    place(positions: number[][]): void {
+        this.pins.forEach((pin, index) => {
+            pin.position = (positions[index]).slice(); // slice to make a copy
+        });
     }
 
     /**

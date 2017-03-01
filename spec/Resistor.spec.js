@@ -61,7 +61,18 @@ describe('Resistor', () => {
         });
 
     });
+    
+    describe('place(pos1, pos2)', () => {
+        
+        it('should place components in the given positions', () => {
+            R.place([[0,0],[0,1]]);
 
+            expect(R.pins[0].position).toEqual([0,0]);
+            expect(R.pins[1].position).toEqual([0,1]);
+        });
+            
+    });
+        
     describe('otherPin(pinIndex)', () => {
         it('should return an array with all pins except the one at the given pin index', () => {
             expect(R.otherPin(0)).toEqual([R.pins[1]]);
