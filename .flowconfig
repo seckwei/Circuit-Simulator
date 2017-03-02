@@ -5,6 +5,6 @@
 [include]
 
 [libs]
-./src/Matrix.js
+./src/
 
 [options]

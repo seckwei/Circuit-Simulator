@@ -1,4 +1,4 @@
-const { Component } = require('../src/Component.js');
+const Component = require('../src/Component.js');
 
 describe('Component Module', () => {
 
