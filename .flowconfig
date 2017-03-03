@@ -6,5 +6,6 @@
 
 [libs]
 ./src/
+./typedef.js
 
 [options]
