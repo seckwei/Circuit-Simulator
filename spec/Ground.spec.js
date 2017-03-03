@@ -1,5 +1,5 @@
 const Ground = require('../src/Ground.js'),
-   { Pin } = require('../src/Component.js'),
+   Pin = require('../src/Pin.js'),
    ComponentType = require('../src/ComponentType.js');;
 
 describe('Ground', () => {

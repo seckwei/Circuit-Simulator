@@ -1,5 +1,5 @@
 const Wire = require('../src/Wire.js'),
-   { Pin } = require('../src/Component.js'),
+   Pin = require('../src/Pin.js'),
    ComponentType = require('../src/ComponentType.js'),
    Matrix = require('../src/Matrix.js');
 

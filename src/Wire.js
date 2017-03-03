@@ -1,6 +1,7 @@
 // @flow
 
-const { Pin } = require('./Component.js'),
+const Component = require('./Component.js'),
+    Pin = require('./Pin.js'),
     VoltageSource = require('./VoltageSource.js'),
     ComponentType = require('./ComponentType.js');
 
