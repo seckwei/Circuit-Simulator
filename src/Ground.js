@@ -19,6 +19,14 @@ class Ground extends Component {
         this.dependant = {};
         this.pins = [new Pin(this, 0), new Pin(this, 1)];
     }
+
+    /**
+     * Throw error if this is called.
+     * This method is implemented to override the parent's.
+     */
+    stamp(): void {
+        throw new TypeError('Ground component does not need to stamp any matrices!');
+    }
 }
 
 module.exports = Ground;

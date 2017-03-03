@@ -21,6 +21,11 @@ class CurrentSource extends Component {
         this.pins = [new Pin(this, 0), new Pin(this, 1)];
     }
 
+    /**
+     * Stamps the 'current' value only on the J matrix
+     * @param {Matrix} matrixY 
+     * @param {Matrix} matrixJ 
+     */
     stamp(matrixY: Matrix, matrixJ: Matrix):void {
         const [from, to] = this.nodes,
             I = this.controlled.I;

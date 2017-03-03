@@ -1,8 +1,11 @@
-const VoltageSource = require('../src/VoltageSource.js'),
-    CurrentSource = require('../src/CurrentSource.js'),
-    Resistor = require('../src/Resistor.js'),
-    Wire = require('../src/Wire.js'),
-    Ground = require('../src/Ground.js'),
+const 
+    { 
+        VoltageSource,
+        CurrentSource,
+        Resistor,
+        Wire,
+        Ground 
+    } = require('../src/AllComponents.js'),
     ComponentType = require('../src/ComponentType.js');
 
 const { WORKING_CIRCUIT } = require('./test_data.spec.js'),

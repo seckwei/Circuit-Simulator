@@ -5,10 +5,10 @@
  */
 class Pin {
     
-	position : number[]|null
-	visited : boolean
 	parent : Component
 	index : number
+	position : number[]|null
+	visited : boolean
 
     /**
      * Creates an instance of Pin.
