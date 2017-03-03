@@ -37,8 +37,7 @@ class VoltageSource extends Component {
      * @param {Matrix} matrixJ
      */
     stamp(matrixY: Matrix, matrixJ: Matrix):void {
-        const from = this.nodes[0],
-            to = this.nodes[1],
+        const [from, to] = this.nodes,
             vSourceIndex = matrixY.data.length - this.vSourceNum;
 
         matrixY.data[vSourceIndex][from] = matrixY.data[from][vSourceIndex] = 1;

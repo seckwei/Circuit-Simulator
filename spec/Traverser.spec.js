@@ -185,9 +185,9 @@ describe('Traverser Module', () => {
             let actual = Object.values(components),
                 expcted = Object.values(WORKING_CIRCUIT.components);
 
-            actual = [].concat.apply([], actual);
+            actual = [].concat(...actual);
             actual = actual.map(c => `${c.id}_${c.nodes.toString()}`).sort();
-            expcted = [].concat.apply([], expcted);
+            expcted = [].concat(...expcted);
             expcted = expcted.map(c => `${c.id}_${c.nodes.toString()}`).sort();
 
             expect(actual).toEqual(expected);

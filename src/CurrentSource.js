@@ -22,8 +22,7 @@ class CurrentSource extends Component {
     }
 
     stamp(matrixY: Matrix, matrixJ: Matrix):void {
-        const from = this.nodes[0],
-            to = this.nodes[1],
+        const [from, to] = this.nodes,
             I = this.controlled.I;
 
         matrixJ.data[from][0] += -I;
