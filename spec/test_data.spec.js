@@ -29,6 +29,15 @@ W2.place([N4, N5]);
 R4.place([N5, N0]);
 R1.place([N2, N5]);
 
+I1.nodes = [0,1];
+W1.nodes = [1,2];
+R2.nodes = [2,3];
+R3.nodes = [3,4];
+W2.nodes = [4,5];
+R4.nodes = [5,0];
+R1.nodes = [2,5];
+GND.nodes = [0];
+
 const WORKING_CIRCUIT = {
     components: {
         [N0.toString()]: [
@@ -97,28 +106,34 @@ const WORKING_CIRCUIT = {
     ],
 
     nodes_arranged: [
+        // 0
         [
             I1.pins[0],
             GND.pins[0],
             R4.pins[1]
         ],
+        // 1
         [
             I1.pins[1],
             W1.pins[0]
         ],
+        // 2
         [
             W1.pins[1],
             R1.pins[0],
             R2.pins[0]
         ],
+        // 3
         [
             R2.pins[1],
             R3.pins[0]
         ],
+        // 4
         [
             R3.pins[1],
             W2.pins[0]
         ],
+        // 5
         [
             R1.pins[1],
             W2.pins[1],

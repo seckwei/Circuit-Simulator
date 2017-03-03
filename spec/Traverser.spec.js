@@ -75,7 +75,7 @@ describe('Traverser Module', () => {
         beforeEach(() => {
             nodes = [],
             nodeIndex = 1,
-            groundNodeIndices = [];
+            groundNodeIndices = [],
             GND = new Ground();
         });
 
@@ -116,7 +116,7 @@ describe('Traverser Module', () => {
 
         it('should update array with the component\'s other pin, provided if it is not a GND', () => {
             let queue = [],
-                R1 = new Resistor();
+                R1 = new Resistor(),
                 GND = new Ground();
 
             Traverser.enqueue(R1.pins[0], queue);
@@ -147,7 +147,7 @@ describe('Traverser Module', () => {
 
     describe('rearrange(nodes)', () => {
         it('should return arranged array nodes - rows with GND moved to row-0, and emptied rows are removed', () => {
-            let prearrangedNodes = Traverser.getNodes(WORKING_CIRCUIT.nodes_prearranged.slice())),
+            let prearrangedNodes = Traverser.getNodes(WORKING_CIRCUIT.nodes_prearranged.slice()),
                 arrangedNodes = Traverser.rearrange(prearrangedNodes);
 
             // Quick check - length should be same
@@ -172,13 +172,25 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('updateComponentNodes(nodes)', () => {
+    describe('assignComponentNodes(components, nodes)', () => {
+        // We need this method so that we can let each component stamp their value into matrix Y and J.
+
         it('should fill in the components \'nodes\' field with the corresponding node indices', () => {
             let components = Object.assign({}, WORKING_CIRCUIT.components),
                 nodes = Traverser.getNodes(components);
                 nodes = Traverser.rearrange(nodes);
 
-            Traverser.updateComponentNodes(nodes);
+            Traverser.assignComponentNodes(components, nodes);
+
+            let actual = Object.values(components),
+                expcted = Object.values(WORKING_CIRCUIT.components);
+
+            actual = [].concat.apply([], actual);
+            actual = actual.map(c => `${c.id}_${c.nodes.toString()}`).sort();
+            expcted = [].concat.apply([], expcted);
+            expcted = expcted.map(c => `${c.id}_${c.nodes.toString()}`).sort();
+
+            expect(actual).toEqual(expected);
         });
     });
 
