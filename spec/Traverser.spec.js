@@ -148,10 +148,10 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('rearrange(nodes)', () => {
+    describe('rearrangeNodes(nodes)', () => {
         it('should return arranged array nodes - rows with GND moved to row-0, and emptied rows are removed', () => {
             let prearrangedNodes = Traverser.getNodes(WORKING_CIRCUIT.nodes_prearranged.slice()),
-                arrangedNodes = Traverser.rearrange(prearrangedNodes);
+                arrangedNodes = Traverser.rearrangeNodes(prearrangedNodes);
 
             // Quick check - length should be same
             expect(arrangedNodes.length).toBe(WORKING_CIRCUIT.nodes_arranged.length);
@@ -181,7 +181,7 @@ describe('Traverser Module', () => {
         it('should fill in the components \'nodes\' field with the corresponding node indices', () => {
             let components = Object.assign({}, WORKING_CIRCUIT.components),
                 nodes = Traverser.getNodes(components);
-                nodes = Traverser.rearrange(nodes);
+                nodes = Traverser.rearrangeNodes(nodes);
 
             Traverser.assignComponentNodes(components, nodes);
 
