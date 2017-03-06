@@ -150,10 +150,10 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('finaliseNodes(nodes)', () => {
+    describe('finaliseNodes(nodes, groundNodeIndices) + getNodes(Board.components)', () => {
         it('should return arranged array nodes - rows with GND moved to row-0, and emptied rows are removed', () => {
             let groundNodeIndices = [],
-                prearrangedNodes = Traverser.getPrearrangedNodes(WORKING_CIRCUIT.nodes_prearranged.slice(), groundNodeIndices),
+                prearrangedNodes = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components), groundNodeIndices),
                 arrangedNodes = Traverser.finaliseNodes(prearrangedNodes, groundNodeIndices);
 
             // Quick check - length should be same
@@ -178,23 +178,22 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('assignComponentNodes(components, nodes)', () => {
+    describe('assignComponentNodes(nodes)', () => {
         // We need this method so that we can let each component stamp their value into matrix Y and J.
 
         it('should fill in the components \'nodes\' field with the corresponding node indices', () => {
             let components = Object.assign({}, WORKING_CIRCUIT.components),
                 nodes = Traverser.getNodes(components);
-                nodes = Traverser.rearrangeNodes(nodes);
 
-            Traverser.assignComponentNodes(components, nodes);
+            Traverser.assignComponentNodes(nodes);
 
             let actual = Object.values(components),
-                expcted = Object.values(WORKING_CIRCUIT.components);
+                expected = Object.values(WORKING_CIRCUIT.components);
 
             actual = [].concat(...actual);
-            actual = actual.map(c => `${c.id}_${c.nodes.toString()}`).sort();
-            expcted = [].concat(...expcted);
-            expcted = expcted.map(c => `${c.id}_${c.nodes.toString()}`).sort();
+            actual = actual.map(pin => `${pin.parent.id}_${pin.parent.nodes.toString()}`).sort();
+            expected = [].concat(...expected);
+            expected = expected.map(pin => `${pin.parent.id}_${pin.parent.nodes.toString()}`).sort();
 
             expect(actual).toEqual(expected);
         });

@@ -88,7 +88,8 @@ class Traverser {
      * nodes[0] array is expected to be empty, because we will later move all
      * nodes with Ground to nodes[0] and clear up empty nodes.
      * @private
-     * @param {BoardComponents} components 
+     * @param {BoardComponents} components
+     * @param {number[]} groundNodeIndices
      * 
      * @returns {Pin[][]} prearrangedNodes
      */
@@ -150,20 +151,33 @@ class Traverser {
      * and removes the empty nodes.
      * @private
      * @param {Pin[][]} nodes
+     * @param {number[]} groundNodeIndices
      * 
      * @return {Pin[][]} nodes
      */
     finaliseNodes(nodes: Pin[][], groundNodeIndices: number[]): Pin[][] {
         let finalNodes = nodes.slice();
         groundNodeIndices.forEach(index => {
-            finalNodes[0].concat(...finalNodes[index]);
+            // We use splice to clear up that array as well 
+            finalNodes[0] = [].concat(...finalNodes[index].splice(0, finalNodes.length));
         });
+
+        let len = finalNodes.length;
+        for(let i = 1; i < len;) {
+            if(finalNodes[i].length === 0) {
+                finalNodes.splice(i,1);
+                --len;
+            }
+            else {
+                ++i;
+            }
+        }
 
         return finalNodes;
     }
 
     /**
-     * Returns the final nodes array, ready for MNA
+     * Returns the final nodes array, ready for stamping
      * @public
      * @param {BoardComponents} components 
      * 
@@ -180,10 +194,15 @@ class Traverser {
      * This method assigns the FINAL node number into the Components' nodes field.
      * This method will encompass all the methods above to give the final result.
      * @public
-     * @param {BoardComponents} components 
      * @param {Pin[][]} nodes 
      */
-    assignComponentNodes(components: BoardComponents, nodes: Pin[][]): void {}
+    assignComponentNodes(nodes: Pin[][]): void {
+        nodes.forEach((node, nodeNum) => {
+            node.forEach(pin => {
+                pin.parent.nodes[pin.index] = nodeNum;
+            });
+        });
+    }
     
     /**
      * AERM stands for Assign-Enqueue-Record-Mark
