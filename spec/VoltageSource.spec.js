@@ -60,9 +60,9 @@ describe('Voltage Source', () => {
 
     });
 
-    describe('otherPin(pinIndex)', () => {
+    describe('otherPins(pinIndex)', () => {
         it('should return an array with all pins except the one at the given pin index', () => {
-            expect(V.otherPin(0)).toEqual([V.pins[1]]);
+            expect(V.otherPins(0)).toEqual([V.pins[1]]);
         });
     });
 

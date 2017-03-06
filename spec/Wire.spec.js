@@ -50,9 +50,9 @@ describe('Wire', () => {
 
     });
 
-    describe('otherPin(pinIndex)', () => {
+    describe('otherPins(pinIndex)', () => {
         it('should return an array with all pins except the one at the given pin index', () => {
-            expect(W.otherPin(0)).toEqual([W.pins[1]]);
+            expect(W.otherPins(0)).toEqual([W.pins[1]]);
         });
     });
 

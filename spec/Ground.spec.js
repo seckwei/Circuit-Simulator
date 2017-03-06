@@ -54,9 +54,9 @@ describe('Ground', () => {
 
     });
 
-    describe('otherPin(pinIndex)', () => {
+    describe('otherPins(pinIndex)', () => {
         it('should return an array with all pins except the one at the given pin index', () => {
-            expect(G.otherPin(0)).toEqual([G.pins[1]]);
+            expect(G.otherPins(0)).toEqual([G.pins[1]]);
         });
     });
 });

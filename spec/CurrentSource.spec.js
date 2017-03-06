@@ -60,9 +60,9 @@ describe('Current Source', () => {
 
     });
 
-    describe('otherPin(pinIndex)', () => {
+    describe('otherPins(pinIndex)', () => {
         it('should return an array with all pins except the one at the given pin index', () => {
-            expect(I.otherPin(0)).toEqual([I.pins[1]]);
+            expect(I.otherPins(0)).toEqual([I.pins[1]]);
         });
     });
 

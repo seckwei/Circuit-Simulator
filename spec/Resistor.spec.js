@@ -73,9 +73,9 @@ describe('Resistor', () => {
             
     });
         
-    describe('otherPin(pinIndex)', () => {
+    describe('otherPins(pinIndex)', () => {
         it('should return an array with all pins except the one at the given pin index', () => {
-            expect(R.otherPin(0)).toEqual([R.pins[1]]);
+            expect(R.otherPins(0)).toEqual([R.pins[1]]);
         });
     });
 

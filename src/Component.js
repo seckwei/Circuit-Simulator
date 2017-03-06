@@ -90,7 +90,7 @@ class Component {
      * @param {number} pinIndex 
      * @returns {Pin[]}
      */
-    otherPin(pinIndex: number): Pin[] {
+    otherPins(pinIndex: number): Pin[] {
         let copy = this.pins.slice();
         copy.splice(pinIndex, 1);
         return copy;
