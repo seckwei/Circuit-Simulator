@@ -182,7 +182,7 @@ class Traverser {
 
     /**
      * Returns the final nodes array, ready to be assigned to the components.
-     * @private
+     * @public
      * @param {BoardComponents} components 
      * 
      * @return {Pin[][]} nodes
@@ -196,14 +196,18 @@ class Traverser {
     /**
      * This method assigns the FINAL node number into the Components' nodes field.
      * @public
-     * @param {BoardComponents} components 
+     * @param {BoardComponents} components
+     * 
+     * @returns {Pin[][]} nodes
      */
-    assignComponentNodes(components: BoardComponents): void {
-        this.getNodes(components).forEach((node, nodeNum) => {
+    assignComponentNodes(components: BoardComponents): Pin[][] {
+        let nodes = this.getNodes(components);
+        nodes.forEach((node, nodeNum) => {
             node.forEach(pin => {
                 pin.parent.nodes[pin.index] = nodeNum;
             });
         });
+        return nodes.slice();
     }
 }
 
