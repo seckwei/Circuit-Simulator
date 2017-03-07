@@ -39,6 +39,7 @@ R1.nodes = [2,5];
 GND.nodes = [0];
 
 const WORKING_CIRCUIT = {
+
     components: {
         [N0.toString()]: [
             I1.pins[0],
@@ -139,7 +140,18 @@ const WORKING_CIRCUIT = {
             W2.pins[1],
             R4.pins[0]
         ]
-    ]
+    ],
+
+    solution: [0, 48.33, 48.33, 45, 40, 40, 5, 5]
 };
+
+let componentDict: {string: Component} = {};
+for(let pos in WORKING_CIRCUIT.components) {
+    WORKING_CIRCUIT.components[pos].forEach(pin => {
+        componentDict[pin.parent.id] = pin.parent;
+    });
+}
+
+WORKING_CIRCUIT.componentDict = componentDict;
 
 module.exports.WORKING_CIRCUIT = WORKING_CIRCUIT;
