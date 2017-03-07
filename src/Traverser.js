@@ -49,23 +49,6 @@ class Traverser {
     }
 
     /**
-     * Records the nodes array index of the Ground component(s) before the rearrangment.
-     * This is so that we can easily 'move' nodes that have Ground to the nodes index 0,
-     * because in MNA, the nodes that have Ground is Node 0.
-     * @private
-     * @param {Pin} pin 
-     * @param {number[]} groundNodeIndices 
-     * @param {number} nodeIndex 
-     */
-    recordGndInd(pin: Pin, groundNodeIndices: number[], nodeIndex: number): void {
-        if(pin.parent.type === ComponentType.TYPE_GROUND && 
-            groundNodeIndices.indexOf(nodeIndex) === -1)
-        {
-            groundNodeIndices.push(nodeIndex);
-        }
-    }
-
-    /**
      * We are using BFS Graph traversal.
      * This places unvisited pin(s) of a component into a queue to come back later.
      * @private
@@ -81,19 +64,18 @@ class Traverser {
     /**
      * Returns 'prearrangedNodes', a 2D array of Pins.
      * The first index denotes the n-th Node that we will be using for MNA.
-     * The second index denotes the Pin in that node. Why store Pin rather 
-     * than Component? Because Pin has parent and index field: parent is the
+     * The second index denotes the Pin in that node. We store Pin rather 
+     * than Component, because Pin has 'parent' and 'index' field: parent is the
      * Component that 'owns' it, and 'index' is the n-th Pin of the parent.
      * 
      * nodes[0] array is expected to be empty, because we will later move all
      * nodes with Ground to nodes[0] and clear up empty nodes.
      * @private
      * @param {BoardComponents} components
-     * @param {number[]} groundNodeIndices
      * 
      * @returns {Pin[][]} prearrangedNodes
      */
-    getPrearrangedNodes(components: BoardComponents, groundNodeIndices: number[]): Pin[][] {
+    getPrearrangedNodes(components: BoardComponents): Pin[][] {
         let prearrangedNodes = [[]],
             nodeIndex = 1,
             queue = [];
@@ -125,7 +107,7 @@ class Traverser {
             // Get array of pins that are in this position
             components[position].forEach((pin) => {
                 if(!pin.visited) {
-                    self.AERM(pin, prearrangedNodes, queue, groundNodeIndices, nodeIndex);
+                    self.AEF(pin, prearrangedNodes, queue, nodeIndex);
                 }
             });
             ++nodeIndex;
@@ -144,6 +126,22 @@ class Traverser {
 
         return prearrangedNodes;
     }
+    
+    /**
+     * AEF stands for Assign-Enqueue-Flag, used in the recursive BFS in
+     * getPrearrangedNodes() method.
+     * @private
+     * @param {Pin} pin 
+     * @param {Pin[][]} nodes 
+     * @param {Pin[]} queue
+     * @param {number} nodeIndex 
+     */
+    AEF(pin: Pin, nodes: Pin[][], queue: Pin[], nodeIndex: number): void
+    {
+        this.assignNode(pin, nodes, nodeIndex);
+        this.enqueue(pin, queue);
+        this.flagVisited(pin);
+    }
 
     /**
      * Supposed to run with the nodes from getPrearrangedNodes()
@@ -151,17 +149,23 @@ class Traverser {
      * and removes the empty nodes.
      * @private
      * @param {Pin[][]} nodes
-     * @param {number[]} groundNodeIndices
      * 
      * @return {Pin[][]} nodes
      */
-    finaliseNodes(nodes: Pin[][], groundNodeIndices: number[]): Pin[][] {
+    finaliseNodes(nodes: Pin[][]): Pin[][] {
         let finalNodes = nodes.slice();
-        groundNodeIndices.forEach(index => {
-            // We use splice to clear up that array as well 
-            finalNodes[0] = [].concat(...finalNodes[index].splice(0, finalNodes.length));
+
+        // Find all nodes with Ground component and move that node to node 0
+        finalNodes.forEach((node, index) => {
+            let hasGround = node.some(pin => {
+                return pin.parent.type === ComponentType.TYPE_GROUND;
+            });
+            if(hasGround) {
+                finalNodes[0] = [].concat(...finalNodes[index].splice(0, finalNodes[index].length));
+            }
         });
 
+        // Then we clear out the empty nodes
         let len = finalNodes.length;
         for(let i = 1; i < len;) {
             if(finalNodes[i].length === 0) {
@@ -177,49 +181,29 @@ class Traverser {
     }
 
     /**
-     * Returns the final nodes array, ready for stamping
-     * @public
+     * Returns the final nodes array, ready to be assigned to the components.
+     * @private
      * @param {BoardComponents} components 
      * 
      * @return {Pin[][]} nodes
      */
     getNodes(components: BoardComponents): Pin[][] {
-        let groundNodeIndices = [], 
-            prearrangedNodes = this.getPrearrangedNodes(components, groundNodeIndices);
+        let prearrangedNodes = this.getPrearrangedNodes(components);
 
-        return this.finaliseNodes(prearrangedNodes, groundNodeIndices);
+        return this.finaliseNodes(prearrangedNodes);
     }
 
     /**
      * This method assigns the FINAL node number into the Components' nodes field.
-     * This method will encompass all the methods above to give the final result.
      * @public
-     * @param {Pin[][]} nodes 
+     * @param {BoardComponents} components 
      */
-    assignComponentNodes(nodes: Pin[][]): void {
-        nodes.forEach((node, nodeNum) => {
+    assignComponentNodes(components: BoardComponents): void {
+        this.getNodes(components).forEach((node, nodeNum) => {
             node.forEach(pin => {
                 pin.parent.nodes[pin.index] = nodeNum;
             });
         });
-    }
-    
-    /**
-     * AERM stands for Assign-Enqueue-Record-Mark
-     * @private
-     * @param {Pin} pin 
-     * @param {Pin[][]} nodes 
-     * @param {Pin[]} queue 
-     * @param {number[]} groundNodeIndices 
-     * @param {number} nodeIndex 
-     */
-    AERM(pin: Pin, nodes: Pin[][], queue: Pin[],
-        groundNodeIndices: Pin[], nodeIndex: number): void
-    {
-        this.assignNode(pin, nodes, nodeIndex);
-        this.enqueue(pin, queue);
-        this.recordGndInd(pin, groundNodeIndices, nodeIndex);
-        this.flagVisited(pin);
     }
 }
 

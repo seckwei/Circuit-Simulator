@@ -68,39 +68,6 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('recordGndInd(pin, groundNodeIndices, nodeIndex)', () => {
-
-        let nodes,
-            nodeIndex,
-            groundNodeIndices,
-            GND;
-
-        beforeEach(() => {
-            nodes = [],
-            nodeIndex = 1,
-            groundNodeIndices = [],
-            GND = new Ground();
-        });
-
-        it('should update groundNodeIndices array with the corresponding node index if the component is GND', () => {
-            Traverser.recordGndInd(GND.pins[0], groundNodeIndices, nodeIndex);
-            expect(groundNodeIndices).toEqual([nodeIndex]);
-        });
-
-        it('should not update groundNodeIndices array with the same node index', () => {
-            Traverser.recordGndInd(GND.pins[0], groundNodeIndices, nodeIndex);
-            Traverser.recordGndInd(GND.pins[0], groundNodeIndices, nodeIndex);
-            expect(groundNodeIndices).toEqual([nodeIndex]);
-        });
-
-        it('should not update the groundNodeIndices array if component is not GND', () => {
-            let R1 = new Resistor();
-
-            Traverser.recordGndInd(R1.pins[0], groundNodeIndices, nodeIndex);
-            expect(groundNodeIndices).toEqual([]);
-        });
-    });
-
     describe('enqueuePin(pin, queue)', () => {
         it('should update array with the component\'s other pin, provided if it has not been visited', () => {
             let queue = [],
@@ -130,7 +97,7 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('getPrearrangedNodes(Board.components, groundNodeIndices)', () => {
+    describe('getPrearrangedNodes(Board.components)', () => {
         it('should return a 2D array, cells may contain Pins', () => {
             /**
              * We are going to compare equality of 2D array of objects, so what I have done here
@@ -138,8 +105,7 @@ describe('Traverser Module', () => {
              * the inner arrays first and finally the outer array itself. I assume The outer array
              * auto sorts by comparing the inner array's first element.
              */
-            let groundNodeIndices = [],
-                sortedActual = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components), groundNodeIndices);
+            let sortedActual = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components));
             
             sortedActual = sortedActual.map(node => node.map(pin => pin.parent.id + pin.index).sort()).sort();
 
@@ -150,11 +116,10 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('finaliseNodes(nodes, groundNodeIndices) + getNodes(Board.components)', () => {
+    describe('finaliseNodes(nodes) + getNodes(Board.components)', () => {
         it('should return arranged array nodes - rows with GND moved to row-0, and emptied rows are removed', () => {
-            let groundNodeIndices = [],
-                prearrangedNodes = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components), groundNodeIndices),
-                arrangedNodes = Traverser.finaliseNodes(prearrangedNodes, groundNodeIndices);
+            let prearrangedNodes = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components)),
+                arrangedNodes = Traverser.finaliseNodes(prearrangedNodes);
 
             // Quick check - length should be same
             expect(arrangedNodes.length).toBe(WORKING_CIRCUIT.nodes_arranged.length);
@@ -182,10 +147,8 @@ describe('Traverser Module', () => {
         // We need this method so that we can let each component stamp their value into matrix Y and J.
 
         it('should fill in the components \'nodes\' field with the corresponding node indices', () => {
-            let components = Object.assign({}, WORKING_CIRCUIT.components),
-                nodes = Traverser.getNodes(components);
-
-            Traverser.assignComponentNodes(nodes);
+            let components = Object.assign({}, WORKING_CIRCUIT.components)
+            Traverser.assignComponentNodes(components);
 
             let actual = Object.values(components),
                 expected = Object.values(WORKING_CIRCUIT.components);
