@@ -1,4 +1,4 @@
-/// @flow
+// @flow
 
 const Matrix = require('./Matrix.js'),
     ComponentType = require('./ComponentType.js'),
@@ -8,6 +8,12 @@ const Matrix = require('./Matrix.js'),
  * Singleton class.
  */
 class Solver {
+    /**
+     * Gets the number of voltage sources
+     * @param {Pin[][]} nodes 
+     * 
+     * @returns {number}
+     */
     getNumVSource(nodes: Pin[][]): number {
         let vSourceCount = {};
         nodes.forEach(node => {
@@ -20,6 +26,12 @@ class Solver {
         return Object.keys(vSourceCount).length;
     }
 
+    /**
+     * Stamps Y and J matrices with the values of the components
+     * @param {BoardComponents} components 
+     * @param {Matrix} Y 
+     * @param {Matrix} J 
+     */
     stampMatrices(components: BoardComponents, Y: Matrix, J: Matrix): void {
         let componentDict: {string: Component} = {};
         for(let pos in components) {
@@ -41,6 +53,15 @@ class Solver {
         }
     }
 
+    /**
+     * In MNA, we have three matrices Yx = J.
+     * This method solves the circuit by calculating the values for
+     * matrix x and returns it.
+     * @param {BoardComponents} components 
+     * @param {Pin[][]} nodes
+     * 
+     * @returns {number[]} solution
+     */
     solve(components: BoardComponents, nodes: Pin[][]): number[] {
         let numNode = nodes.length,
             numVSource = this.getNumVSource(nodes);
