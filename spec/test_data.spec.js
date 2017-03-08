@@ -142,7 +142,7 @@ const WORKING_CIRCUIT = {
         ]
     ],
 
-    solution: [0, 48.33, 48.33, 45, 40, 40, 5, 5]
+    solution: [0, 48.33, 48.33, 45, 40, 40, 5, 0.83333]
 };
 
 let componentDict: {string: Component} = {};

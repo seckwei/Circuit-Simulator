@@ -1,6 +1,8 @@
 /// @flow
 
-const ComponentType = require('./ComponentType.js');
+const Matrix = require('./Matrix.js'),
+    ComponentType = require('./ComponentType.js'),
+    Numeric = require('numericjs');
 
 /**
  * Singleton class.
@@ -39,8 +41,25 @@ class Solver {
         }
     }
 
-    solve(components: BoardComponents): number[] {
+    solve(components: BoardComponents, nodes: Pin[][]): number[] {
+        let numNode = nodes.length,
+            numVSource = this.getNumVSource(nodes);
 
+        let Y = new Matrix(numNode + numVSource),
+            J = new Matrix(numNode + numVSource, 1);
+
+        this.stampMatrices(components, Y, J);
+
+        // Remove the 0-th row and column because we don't need Ground nodes
+        Y.data.splice(0,1);
+        for(let row in Y.data) {
+            Y.data[row] = Y.data[row].splice(1, Y.data[row].length);
+        }
+        // Same as above for matrix J
+        J.data.splice(0,1);
+
+        // Start with 0, which is the voltage of the 0th/ground node
+        return [0].concat(...Numeric.solve(Y.data, J.data));
     }
 }
 
