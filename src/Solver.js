@@ -28,14 +28,14 @@ class Solver {
 
     /**
      * Stamps Y and J matrices with the values of the components
-     * @param {BoardComponents} components 
+     * @param {BoardPins} pins 
      * @param {Matrix} Y 
      * @param {Matrix} J 
      */
-    stampMatrices(components: BoardComponents, Y: Matrix, J: Matrix): void {
+    stampMatrices(pins: BoardPins, Y: Matrix, J: Matrix): void {
         let componentDict: {string: Component} = {};
-        for(let pos in components) {
-            components[pos].forEach(pin => {
+        for(let pos in pins) {
+            pins[pos].forEach(pin => {
                 componentDict[pin.parent.id] = pin.parent;
             });
         }
@@ -57,19 +57,19 @@ class Solver {
      * In MNA, we have three matrices Yx = J.
      * This method solves the circuit by calculating the values for
      * matrix x and returns it.
-     * @param {BoardComponents} components 
+     * @param {BoardPins} pins 
      * @param {Pin[][]} nodes
      * 
      * @returns {number[]} solution
      */
-    solve(components: BoardComponents, nodes: Pin[][]): number[] {
+    solve(pins: BoardPins, nodes: Pin[][]): number[] {
         let numNode = nodes.length,
             numVSource = this.getNumVSource(nodes);
 
         let Y = new Matrix(numNode + numVSource),
             J = new Matrix(numNode + numVSource, 1);
 
-        this.stampMatrices(components, Y, J);
+        this.stampMatrices(pins, Y, J);
 
         // Remove the 0-th row and column because we don't need Ground nodes
         Y.data.splice(0,1);

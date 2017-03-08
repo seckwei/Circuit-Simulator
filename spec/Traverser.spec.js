@@ -13,23 +13,23 @@ const { WORKING_CIRCUIT } = require('./test_data.spec.js'),
 
 describe('Traverser Module', () => {
 
-    describe('resetVisited(Board.components)', () => {
+    describe('resetVisited(Board.pins)', () => {
         it('should reset all \'visited\' flag of the pins to false', () => {
             // Copy the object before we mutate it for testing
-            const components = Object.assign({}, WORKING_CIRCUIT.components);
+            const pins = Object.assign({}, WORKING_CIRCUIT.pins);
 
             // Set some pins visited to true
-            for(let key in components){
-                components[key][0].visited = true;
+            for(let key in pins){
+                pins[key][0].visited = true;
             }
 
             // Then, we reset them
-            Traverser.resetVisited(components);
+            Traverser.resetVisited(pins);
 
             // Finally, test
             let flag = true;
-            for(let key in components){
-                if(components[key].some(pin => pin.visited)){
+            for(let key in pins){
+                if(pins[key].some(pin => pin.visited)){
                     flag = false;
                     break;
                 }
@@ -97,7 +97,7 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('getPrearrangedNodes(Board.components)', () => {
+    describe('getPrearrangedNodes(Board.pins)', () => {
         it('should return a 2D array, cells may contain Pins', () => {
             /**
              * We are going to compare equality of 2D array of objects, so what I have done here
@@ -105,7 +105,7 @@ describe('Traverser Module', () => {
              * the inner arrays first and finally the outer array itself. I assume The outer array
              * auto sorts by comparing the inner array's first element.
              */
-            let sortedActual = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components));
+            let sortedActual = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.pins));
             
             sortedActual = sortedActual.map(node => node.map(pin => pin.parent.id + pin.index).sort()).sort();
 
@@ -116,9 +116,9 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('finaliseNodes(nodes) + getNodes(Board.components)', () => {
+    describe('finaliseNodes(nodes) + getNodes(Board.pins)', () => {
         it('should return arranged array nodes - rows with GND moved to row-0, and emptied rows are removed', () => {
-            let prearrangedNodes = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.components)),
+            let prearrangedNodes = Traverser.getPrearrangedNodes(Object.assign({}, WORKING_CIRCUIT.pins)),
                 arrangedNodes = Traverser.finaliseNodes(prearrangedNodes);
 
             // Quick check - length should be same
@@ -143,15 +143,15 @@ describe('Traverser Module', () => {
         });
     });
 
-    describe('assignComponentNodes(nodes)', () => {
+    describe('assignComponentNodes(Board.pins)', () => {
         // We need this method so that we can let each component stamp their value into matrix Y and J.
 
         it('should fill in the components \'nodes\' field with the corresponding node indices', () => {
-            let components = Object.assign({}, WORKING_CIRCUIT.components)
-            Traverser.assignComponentNodes(components);
+            let pins = Object.assign({}, WORKING_CIRCUIT.pins)
+            Traverser.assignComponentNodes(pins);
 
-            let actual = Object.values(components),
-                expected = Object.values(WORKING_CIRCUIT.components);
+            let actual = Object.values(pins),
+                expected = Object.values(WORKING_CIRCUIT.pins);
 
             actual = [].concat(...actual);
             actual = actual.map(pin => `${pin.parent.id}_${pin.parent.nodes.toString()}`).sort();

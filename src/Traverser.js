@@ -17,12 +17,12 @@ class Traverser {
     /**
      * Resets the visited flag of all components' pins to FALSE.
      * @private
-     * @param {BoardComponents} components 
+     * @param {BoardPins} pins 
      */
-    resetVisited(components: BoardComponents): void {
-        for(let position in components) {
-            for(let pin in components[position]) {
-                components[position][pin].visited = false;
+    resetVisited(pins: BoardPins): void {
+        for(let position in pins) {
+            for(let pin in pins[position]) {
+                pins[position][pin].visited = false;
             }
         }
     }
@@ -71,29 +71,29 @@ class Traverser {
      * nodes[0] array is expected to be empty, because we will later move all
      * nodes with Ground to nodes[0] and clear up empty nodes.
      * @private
-     * @param {BoardComponents} components
+     * @param {BoardPins} pins
      * 
      * @returns {Pin[][]} prearrangedNodes
      */
-    getPrearrangedNodes(components: BoardComponents): Pin[][] {
+    getPrearrangedNodes(pins: BoardPins): Pin[][] {
         let prearrangedNodes = [[]],
             nodeIndex = 1,
             queue = [];
 
-        this.resetVisited(components);
+        this.resetVisited(pins);
 
         // Start from any source component's pin
-        let pins: Pin[],
+        let currentPins: Pin[],
             startPin: Pin,
             strPos: string;
 
         // Search for that souce component's pin and its position on the board
-        for(let position in components) {
-            pins = components[position];
-            for(let pinInd in pins) {
-                if(pins[pinInd].parent.type === ComponentType.TYPE_SOURCE) {
+        for(let position in pins) {
+            currentPins = pins[position];
+            for(let pinInd in currentPins) {
+                if(currentPins[pinInd].parent.type === ComponentType.TYPE_SOURCE) {
                     strPos = position;
-                    startPin = pins[pinInd];
+                    startPin = currentPins[pinInd];
                     break;
                 }
             }
@@ -105,7 +105,7 @@ class Traverser {
         (function BFS(position: string){
 
             // Get array of pins that are in this position
-            components[position].forEach((pin) => {
+            pins[position].forEach((pin) => {
                 if(!pin.visited) {
                     self.AEF(pin, prearrangedNodes, queue, nodeIndex);
                 }
@@ -183,12 +183,12 @@ class Traverser {
     /**
      * Returns the final nodes array, ready to be assigned to the components.
      * @public
-     * @param {BoardComponents} components 
+     * @param {BoardPins} pins 
      * 
      * @return {Pin[][]} nodes
      */
-    getNodes(components: BoardComponents): Pin[][] {
-        let prearrangedNodes = this.getPrearrangedNodes(components);
+    getNodes(pins: BoardPins): Pin[][] {
+        let prearrangedNodes = this.getPrearrangedNodes(pins);
 
         return this.finaliseNodes(prearrangedNodes);
     }
@@ -196,12 +196,12 @@ class Traverser {
     /**
      * This method assigns the FINAL node number into the Components' nodes field.
      * @public
-     * @param {BoardComponents} components
+     * @param {BoardPins} pins
      * 
      * @returns {Pin[][]} nodes
      */
-    assignComponentNodes(components: BoardComponents): Pin[][] {
-        let nodes = this.getNodes(components);
+    assignComponentNodes(pins: BoardPins): Pin[][] {
+        let nodes = this.getNodes(pins);
         nodes.forEach((node, nodeNum) => {
             node.forEach(pin => {
                 pin.parent.nodes[pin.index] = nodeNum;
