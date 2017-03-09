@@ -1,12 +1,15 @@
 // @flow
 
+/**
+ * This class holds the pins of the components.
+ */
 class Board {
 
     grid: Pin[][][];
     pins: BoardPins;
 
     /**
-     * 
+     * Initialises the fields
      */
     constructor() {
         /**
@@ -22,7 +25,10 @@ class Board {
     }
 
     /**
-     * 
+     * Adds a component to the board and adds the position to
+     * the respective component pins
+     * @param {Component} component 
+     * @param {number[][]} pinPositions 
      */
     add(component: Component, pinPositions: number[][]): void {
         for(let index in component.pins) {
@@ -42,7 +48,9 @@ class Board {
     }
 
     /**
-     * 
+     * Removes the given component from the board and also
+     * removes the position from the respective pins
+     * @param {Component} component
      */
     remove(component: Component): void {
         let pinPositions = component.pins.map(pin => {
