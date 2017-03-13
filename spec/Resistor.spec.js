@@ -138,4 +138,17 @@ describe('Resistor', () => {
         });
             
     });
+
+    describe('update({vals})', () => {
+        it('should update its voltage and current with the given values', () => {
+            R.controlled.R = 2;
+            R.update({pins: [10, 4]});
+
+            expect(R.pins[0].V).toBe(10);
+            expect(R.pins[1].V).toBe(4);
+
+            expect(R.dependant.V).toBe(6);
+            expect(R.dependant.I).toBe(3);
+        });
+    });
 });

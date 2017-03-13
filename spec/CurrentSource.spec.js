@@ -125,4 +125,15 @@ describe('Current Source', () => {
         });
             
     });
+
+    describe('update({vals})', () => {
+        it('should update its voltage with the given value', () => {
+            I.update({pins: [2, 6]});
+            
+            expect(I.pins[0].V).toBe(2);
+            expect(I.pins[1].V).toBe(6);
+
+            expect(I.dependant.V).toBe(4);
+        });
+    });
 });

@@ -106,6 +106,14 @@ class Component {
     stamp(matrixY: Matrix, matrixJ: Matrix): void {
         throw TypeError('Abstract function stamp() not overriden');
     }
+    
+    /**
+     * Updates the component's dependant field and the pins' voltage
+     * @param {Object} values
+     */
+    update(values: {string: number}): void {
+        throw TypeError('Abstract function update() not overriden');
+    }
 }
 
 Component.idCount = 0;

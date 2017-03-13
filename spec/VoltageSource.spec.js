@@ -135,4 +135,14 @@ describe('Voltage Source', () => {
             ]);
         });
     });
+
+    describe('update({vals})', () => {
+        it('should update its current with the given value', () => {
+            V.update({I: 10, pins: [5, 7]});
+
+            expect(V.dependant.I).toBe(10);
+            expect(V.pins[0].V).toBe(5);
+            expect(V.pins[1].V).toBe(7);
+        });
+    });
 });

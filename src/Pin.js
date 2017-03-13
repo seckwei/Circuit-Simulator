@@ -9,6 +9,7 @@ class Pin {
 	index : number
 	position : number[]|null
 	visited : boolean
+    V: number
 
     /**
      * Creates an instance of Pin.
@@ -36,6 +37,11 @@ class Pin {
          * @type {boolean} [visited=false]
          */
         this.visited = false;
+        /**
+         * Voltage on this pin
+         * @type {number} [V=0]
+         */
+        this.V = 0;
 	}
 }
 

@@ -121,4 +121,16 @@ describe('Wire', () => {
             ]);
         });
     });
+
+    describe('update({vals})', () => {
+        it('should update its voltage and current with the given values', () => {
+            W.update({I: 10, pins: [1, 2]});
+
+            expect(W.pins[0].V).toBe(1);
+            expect(W.pins[1].V).toBe(2);
+            expect(W.dependant.I).toBe(10);
+            
+            expect(W.dependant.V).toBe(1);
+        });
+    });
 });
