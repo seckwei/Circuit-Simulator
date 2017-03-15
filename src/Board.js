@@ -13,7 +13,7 @@ class Board {
      */
     constructor() {
         /**
-         * Grids which holds the pins of components
+         * Grid which holds the pins of components
          * @type {Pin[][][]}
          */
         this.grid = [];
