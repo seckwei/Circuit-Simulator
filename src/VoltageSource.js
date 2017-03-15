@@ -36,7 +36,7 @@ class VoltageSource extends Component {
      * @param {Matrix} matrixY 
      * @param {Matrix} matrixJ
      */
-    stamp(matrixY: Matrix, matrixJ: Matrix):void {
+    stamp(matrixY: Matrix, matrixJ: Matrix): void {
         const [from, to] = this.nodes,
             vSourceIndex = matrixY.data.length - this.vSourceNum;
 
@@ -44,6 +44,17 @@ class VoltageSource extends Component {
         matrixY.data[vSourceIndex][to] = matrixY.data[to][vSourceIndex] = -1;
 
         matrixJ.data[vSourceIndex][0] = this.controlled.V
+    }
+
+    /**
+     * Updates this component's dependant values and pins' voltage.
+     * Called from CircuitUpdater update() method
+     * @param {Object} value 
+     */
+    update(value: Object): void {
+        this.dependant.I = value.I;
+        this.pins[0].V = value.pins[0];
+        this.pins[1].V = value.pins[1];
     }
 }
 

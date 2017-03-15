@@ -38,6 +38,9 @@ R7.nodes = [5,0];
 R4.nodes = [2,5];
 G1.nodes = [0];
 
+W2.vSourceNum = 1;
+W3.vSourceNum = 2;
+
 const WORKING_CIRCUIT = {
 
     pins: {
@@ -144,7 +147,7 @@ const WORKING_CIRCUIT = {
 
     solution: [0, 48.33, 48.33, 45, 40, 40, 5, 0.83333],
 
-    updateObj: {
+    updateObject: {
         I0: {
             component: I0,
             value: {

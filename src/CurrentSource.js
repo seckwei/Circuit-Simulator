@@ -33,6 +33,20 @@ class CurrentSource extends Component {
         matrixJ.data[from][0] += -I;
         matrixJ.data[to][0] += I;
     }
+
+    /**
+     * Updates this component's dependant values and pins' voltage.
+     * Called from CircuitUpdater update() method
+     * @param {Object} value 
+     */
+    update(value: Object): void {
+        let [p0, p1] = value.pins;
+       
+        this.pins[0].V = p0;
+        this.pins[1].V = p1;
+        
+        this.dependant.V = Math.abs(p0 - p1);
+    }
 }
 
 module.exports = CurrentSource;

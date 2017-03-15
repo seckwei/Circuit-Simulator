@@ -1,4 +1,5 @@
-const Board = require('./Board.spec'),
+const CircuitUpdater_spec = require('./CircuitUpdater.spec'), 
+    Board_spec = require('./Board.spec'),
     Traverser_spec = require('./Traverser.spec'),
     Solver_spec = require('./Solver.spec'),
     Matrix_spec = require('./Matrix.spec'),

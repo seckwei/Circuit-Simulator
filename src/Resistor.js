@@ -34,6 +34,21 @@ class Resistor extends Component {
         matrixY.data[to][from] += -G;
         matrixY.data[from][to] += -G;
     }
+
+    /**
+     * Updates this component's dependant values and pins' voltage.
+     * Called from CircuitUpdater update() method
+     * @param {Object} value 
+     */
+    update(value: Object): void {
+        let [p0, p1] = value.pins;
+       
+        this.pins[0].V = p0;
+        this.pins[1].V = p1;
+        
+        this.dependant.V = Math.abs(p0 - p1);
+        this.dependant.I = this.dependant.V / this.controlled.R;
+    }
 }
 
 module.exports = Resistor;

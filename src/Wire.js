@@ -20,6 +20,16 @@ class Wire extends VoltageSource {
         this.dependant = { V: undefined, I: undefined };
         this.pins = [new Pin(this, 0), new Pin(this, 1)];
     }
+
+    /**
+     * Updates this component's dependant values and pins' voltage.
+     * Called from CircuitUpdater update() method
+     * @param {Object} value 
+     */
+    update(value: Object): void {
+        super.update(value);
+        this.dependant.V = value.pins[0];
+    }
 }
 
 module.exports = Wire;
