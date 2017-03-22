@@ -5,9 +5,20 @@ const Matrix = require('./Matrix.js'),
     Numeric = require('numericjs');
 
 /**
- * Singleton class.
+ * Solves the circuit
  */
 class Solver {
+
+    simConfig: Object;
+
+    constructor(simConfig: Object) {
+        /**
+         * Key-value object that holds the config for this simulation
+         * @type {Object}
+         */
+        this.simConfig = simConfig;
+    }
+
     /**
      * Gets the number of voltage sources
      * @param {Pin[][]} nodes 
@@ -48,7 +59,7 @@ class Solver {
             }
 
             if(componentDict[id].type !== ComponentType.TYPE_GROUND) {
-                componentDict[id].stamp(Y, J);
+                componentDict[id].stamp(Y, J, this.simConfig);
             }
         }
     }
@@ -84,4 +95,4 @@ class Solver {
     }
 }
 
-module.exports = new Solver();
+module.exports = Solver;

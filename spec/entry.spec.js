@@ -8,4 +8,5 @@ const CircuitUpdater_spec = require('./CircuitUpdater.spec'),
     CurrentSource_spec = require('./CurrentSource.spec'),
     Resistor_spec = require('./Resistor.spec'),
     Wire_spec = require('./Wire.spec'),
+    Capacitor_spec = require('./Capacitor.spec'),
     Ground_spec = require('./Ground.spec');

@@ -102,13 +102,16 @@ class Component {
      * @abstract
      * @param {Matrix} matrixY 
      * @param {Matrix} matrixJ
+     * @param {Object} simConfig
      */
-    stamp(matrixY: Matrix, matrixJ: Matrix): void {
+    stamp(matrixY: Matrix, matrixJ: Matrix, simConfig: Object): void {
         throw TypeError('Abstract function stamp() not overriden');
     }
     
     /**
      * Updates the component's dependant field and the pins' voltage
+     * @public
+     * @abstract
      * @param {Object} values
      */
     update(values: {string: number}): void {
