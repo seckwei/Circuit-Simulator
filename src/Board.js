@@ -32,7 +32,7 @@ export default class Board {
      */
     add(component: Component, pinPositions: number[][]): void {
         for(let index in component.pins) {
-            let pos = pinPositions[index];
+            let pos = pinPositions[parseInt(index)];
 
             if(pos == undefined) {
                 throw new Error('Missing pin position');

@@ -44,7 +44,7 @@ export default class Solver {
      * @param {Matrix} J 
      */
     stampMatrices(pins: BoardPins, Y: Matrix, J: Matrix): void {
-        let componentDict: {string: Component} = {};
+        let componentDict: {}|{string: Component} = {};
         for(let pos in pins) {
             pins[pos].forEach(pin => {
                 componentDict[pin.parent.id] = pin.parent;

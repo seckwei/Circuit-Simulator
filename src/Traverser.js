@@ -85,7 +85,7 @@ class Traverser {
         // Start from any source component's pin
         let currentPins: Pin[],
             startPin: Pin,
-            strPos: string;
+            strPos: string = "";
 
         // Search for that souce component's pin and its position on the board
         for(let position in pins) {
