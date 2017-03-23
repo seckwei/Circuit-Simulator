@@ -1,5 +1,5 @@
-import CurrentSource from '../src/CurrentSource.js';
-import Pin from '../src/Pin.js';
+import CurrentSource from '../src/Components/CurrentSource.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 import Matrix from '../src/Matrix.js';
 

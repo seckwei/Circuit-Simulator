@@ -1,5 +1,5 @@
-import Inductor from '../src/Inductor.js';
-import Pin from '../src/Pin.js';
+import Inductor from '../src/Components/Inductor.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 import Matrix from '../src/Matrix.js';
 import simConfig from '../src/SimulationConfig.js';

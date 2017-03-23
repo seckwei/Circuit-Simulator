@@ -1,5 +1,5 @@
 import Board from '../src/Board.js';
-import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/AllComponents.js';
+import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/Components';
 
 describe('Board', () => {
     let B, V, G;

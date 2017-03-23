@@ -1,5 +1,5 @@
-import VoltageSource from '../src/VoltageSource.js';
-import Pin from '../src/Pin.js';
+import VoltageSource from '../src/Components/VoltageSource.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 import Matrix from '../src/Matrix.js';
 

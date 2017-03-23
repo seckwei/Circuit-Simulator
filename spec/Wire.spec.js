@@ -1,5 +1,5 @@
-import Wire from '../src/Wire.js';
-import Pin from '../src/Pin.js';
+import Wire from '../src/Components/Wire.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 import Matrix from '../src/Matrix.js';
 

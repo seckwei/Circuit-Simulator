@@ -1,11 +1,4 @@
-import { 
-        VoltageSource,
-        CurrentSource,
-        Resistor,
-        Wire,
-        Ground 
-    } from '../src/AllComponents.js';
-
+import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/Components';
 import ComponentType from '../src/ComponentType.js';
 import WORKING_CIRCUIT from './test_data.spec.js';
 import Traverser from '../src/Traverser.js';

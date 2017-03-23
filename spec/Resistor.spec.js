@@ -1,5 +1,5 @@
-import Resistor from '../src/Resistor.js';
-import Pin from '../src/Pin.js';
+import Resistor from '../src/Components/Resistor.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 import Matrix from '../src/Matrix.js';
 

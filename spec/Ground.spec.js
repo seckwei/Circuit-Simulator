@@ -1,5 +1,5 @@
-import Ground from '../src/Ground.js';
-import Pin from '../src/Pin.js';
+import Ground from '../src/Components/Ground.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 
 describe('Ground', () => {

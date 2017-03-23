@@ -3,7 +3,7 @@
 import Component from './Component.js';
 import Pin from './Pin.js';
 import VoltageSource from './VoltageSource.js';
-import ComponentType from './ComponentType.js';
+import ComponentType from '../ComponentType.js';
 
 /**
  * Wire class

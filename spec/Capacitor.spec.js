@@ -1,5 +1,5 @@
-import Capacitor from '../src/Capacitor.js';
-import Pin from '../src/Pin.js';
+import Capacitor from '../src/Components/Capacitor.js';
+import Pin from '../src/Components/Pin.js';
 import ComponentType from '../src/ComponentType.js';
 import Matrix from '../src/Matrix.js';
 import simConfig from '../src/SimulationConfig.js';

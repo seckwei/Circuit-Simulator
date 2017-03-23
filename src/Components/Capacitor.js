@@ -2,7 +2,7 @@
 
 import Component from './Component.js';
 import Pin from './Pin.js';
-import ComponentType from './ComponentType.js';
+import ComponentType from '../ComponentType.js';
 
 /**
  * Utilising Norton Companion Model and Trapezoidal Approximation

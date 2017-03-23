@@ -1,8 +1,4 @@
-import VoltageSource from '../src/VoltageSource.js';
-import CurrentSource from '../src/CurrentSource.js';
-import Resistor from '../src/Resistor.js';
-import Wire from '../src/Wire.js';
-import Ground from '../src/Ground.js';
+import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/Components';
 
 const I0 = new CurrentSource(5),
     G1 = new Ground(),          
