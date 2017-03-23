@@ -1,8 +1,8 @@
-const Matrix = require('../src/Matrix.js'),
-    Traverser = require('../src/Traverser.js'),
-    SimConfig = require('../src/SimulationConfig.js'),
-    Solver = require('../src/Solver.js'),
-    { WORKING_CIRCUIT } = require('./test_data.spec.js');
+import Matrix from '../src/Matrix.js';
+import Traverser from '../src/Traverser.js';
+import SimConfig from '../src/SimulationConfig.js';
+import Solver from '../src/Solver.js';
+import WORKING_CIRCUIT from './test_data.spec.js';
 
 describe('Solver', () => {
     

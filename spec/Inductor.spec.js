@@ -1,8 +1,8 @@
-const Inductor = require('../src/Inductor.js'),
-   Pin = require('../src/Pin.js'),
-   ComponentType = require('../src/ComponentType.js'),
-   Matrix = require('../src/Matrix.js'),
-   simConfig = require('../src/SimulationConfig.js');
+import Inductor from '../src/Inductor.js';
+import Pin from '../src/Pin.js';
+import ComponentType from '../src/ComponentType.js';
+import Matrix from '../src/Matrix.js';
+import simConfig from '../src/SimulationConfig.js';
 
 describe('Inductor', () => {
 

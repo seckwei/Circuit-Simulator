@@ -7,4 +7,4 @@ const ComponentType = {
     TYPE_GROUND: Symbol('Ground')
 };
 
-module.exports = ComponentType;
+export {ComponentType as default};

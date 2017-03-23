@@ -3,7 +3,7 @@
 /**
  * Pin class
  */
-class Pin {
+export default class Pin {
     
 	parent : Component
 	index : number
@@ -45,4 +45,3 @@ class Pin {
 	}
 }
 
-module.exports = Pin;

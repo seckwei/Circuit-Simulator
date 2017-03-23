@@ -1,13 +1,13 @@
 // @flow
 
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    ComponentType = require('./ComponentType.js');
+import Component from './Component.js';
+import Pin from './Pin.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * VoltageSource class
  */
-class VoltageSource extends Component {
+export default class VoltageSource extends Component {
 
     vSourceNum: number;
 
@@ -58,4 +58,3 @@ class VoltageSource extends Component {
     }
 }
 
-module.exports = VoltageSource;

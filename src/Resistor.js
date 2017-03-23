@@ -1,13 +1,13 @@
 // @flow
 
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    ComponentType = require('./ComponentType.js');
+import Component from './Component.js';
+import Pin from './Pin.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * Resistor class
  */
-class Resistor extends Component {
+export default class Resistor extends Component {
 
     /**
      * Creates an instance of Resistor.
@@ -51,4 +51,3 @@ class Resistor extends Component {
     }
 }
 
-module.exports = Resistor;

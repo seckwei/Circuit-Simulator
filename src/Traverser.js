@@ -1,6 +1,6 @@
-/// @flow
+// @flow
 
-const ComponentType = require('./ComponentType.js');
+import ComponentType from './ComponentType.js';
 
 /**
  * Singleton class.
@@ -211,4 +211,6 @@ class Traverser {
     }
 }
 
-module.exports = new Traverser();
+const Singleton = new Traverser();
+
+export { Singleton as default };

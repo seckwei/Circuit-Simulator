@@ -1,11 +1,13 @@
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    ComponentType = require('./ComponentType.js');
+// @flow
+
+import Component from './Component.js';
+import Pin from './Pin.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * Utilising Norton Companion Model and Trapezoidal Approximation
  */
-class Inductor extends Component {
+export default class Inductor extends Component {
 
     constructor(initInductance: number = 1) {
         super('L');
@@ -64,5 +66,3 @@ class Inductor extends Component {
         this.dependant.I = (this.dependant.V * this.dependant.companionG) - this.dependant.companionI;
     }
 }
-
-module.exports = Inductor;

@@ -1,13 +1,13 @@
 // @flow
 
-const Matrix = require('./Matrix.js'),
-    ComponentType = require('./ComponentType.js'),
-    Numeric = require('numericjs');
+import Matrix from './Matrix.js';
+import ComponentType from './ComponentType.js';
+import Numeric from 'numericjs';
 
 /**
  * Solves the circuit
  */
-class Solver {
+export default class Solver {
 
     simConfig: Object;
 
@@ -95,4 +95,3 @@ class Solver {
     }
 }
 
-module.exports = Solver;

@@ -1,7 +1,7 @@
-const Resistor = require('../src/Resistor.js'),
-   Pin = require('../src/Pin.js'),
-   ComponentType = require('../src/ComponentType.js'),
-   Matrix = require('../src/Matrix.js');
+import Resistor from '../src/Resistor.js';
+import Pin from '../src/Pin.js';
+import ComponentType from '../src/ComponentType.js';
+import Matrix from '../src/Matrix.js';
 
 describe('Resistor', () => {
 

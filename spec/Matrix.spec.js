@@ -1,4 +1,4 @@
-const Matrix = require('../src/Matrix.js');
+import Matrix from '../src/Matrix.js';
 
 describe('Matrix module', () => {
     

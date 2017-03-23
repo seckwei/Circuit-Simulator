@@ -3,7 +3,7 @@
 /**
  * This class holds the pins of the components.
  */
-class Board {
+export default class Board {
 
     grid: Pin[][][];
     pins: BoardPins;
@@ -73,4 +73,3 @@ class Board {
     }
 }
 
-module.exports = Board;

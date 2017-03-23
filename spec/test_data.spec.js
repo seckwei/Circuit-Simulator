@@ -1,8 +1,8 @@
-const VoltageSource = require('../src/VoltageSource.js'),
-    CurrentSource = require('../src/CurrentSource.js'),
-    Resistor = require('../src/Resistor.js'),
-    Wire = require('../src/Wire.js'),
-    Ground = require('../src/Ground.js'); 
+import VoltageSource from '../src/VoltageSource.js';
+import CurrentSource from '../src/CurrentSource.js';
+import Resistor from '../src/Resistor.js';
+import Wire from '../src/Wire.js';
+import Ground from '../src/Ground.js';
 
 const I0 = new CurrentSource(5),
     G1 = new Ground(),          
@@ -195,4 +195,4 @@ const WORKING_CIRCUIT = {
     }
 };
 
-module.exports.WORKING_CIRCUIT = WORKING_CIRCUIT;
+export {WORKING_CIRCUIT as default};

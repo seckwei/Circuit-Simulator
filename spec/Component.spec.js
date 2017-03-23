@@ -1,4 +1,4 @@
-const Component = require('../src/Component.js');
+import Component from '../src/Component.js';
 
 describe('Component Module', () => {
 

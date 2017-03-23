@@ -3,7 +3,7 @@
 /**
  * Component class
  */
-class Component {
+export default class Component {
 
     static idCount: number;
     
@@ -121,4 +121,3 @@ class Component {
 
 Component.idCount = 0;
 
-module.exports = Component;

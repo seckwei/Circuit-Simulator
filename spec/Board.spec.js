@@ -1,5 +1,5 @@
-const Board = require('../src/Board.js'),
-    { VoltageSource, CurrentSource, Wire, Resistor, Ground } = require('../src/AllComponents.js');
+import Board from '../src/Board.js';
+import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/AllComponents.js';
 
 describe('Board', () => {
     let B, V, G;

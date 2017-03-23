@@ -1,6 +1,6 @@
-const Updater = require('../src/CircuitUpdater.js'),
-    Solver = require('../src/Solver.js'),
-    { WORKING_CIRCUIT } = require('./test_data.spec.js');
+import Updater from '../src/CircuitUpdater.js';
+import Solver from '../src/Solver.js';
+import WORKING_CIRCUIT from './test_data.spec.js';
 
 describe('Ciruit Updater', () => {
 

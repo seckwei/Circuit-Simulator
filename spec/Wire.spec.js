@@ -1,7 +1,7 @@
-const Wire = require('../src/Wire.js'),
-   Pin = require('../src/Pin.js'),
-   ComponentType = require('../src/ComponentType.js'),
-   Matrix = require('../src/Matrix.js');
+import Wire from '../src/Wire.js';
+import Pin from '../src/Pin.js';
+import ComponentType from '../src/ComponentType.js';
+import Matrix from '../src/Matrix.js';
 
 describe('Wire', () => {
 

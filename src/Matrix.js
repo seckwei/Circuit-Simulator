@@ -9,7 +9,7 @@
  * See: https://babeljs.io/docs/usage/caveats/
  * 
  */
-class Matrix {
+export default class Matrix {
 
     data: number[][];
 
@@ -102,4 +102,3 @@ class Matrix {
     }
 }
 
-module.exports = Matrix;

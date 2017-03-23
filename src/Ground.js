@@ -1,13 +1,13 @@
 // @flow
 
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    ComponentType = require('./ComponentType.js');;
+import Component from './Component.js';
+import Pin from './Pin.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * Ground class
  */
-class Ground extends Component {
+export default class Ground extends Component {
 
     /**
      * Creates an instance of Ground.
@@ -28,5 +28,3 @@ class Ground extends Component {
         throw new TypeError('Ground component does not need to stamp any matrices!');
     }
 }
-
-module.exports = Ground;

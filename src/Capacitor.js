@@ -1,11 +1,13 @@
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    ComponentType = require('./ComponentType.js');
+// @flow
+
+import Component from './Component.js';
+import Pin from './Pin.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * Utilising Norton Companion Model and Trapezoidal Approximation
  */
-class Capacitor extends Component {
+export default class Capacitor extends Component {
 
     constructor(initCapacitance: number = 1e-6) {
         super('C');
@@ -64,5 +66,3 @@ class Capacitor extends Component {
         this.dependant.I = (this.dependant.V * this.dependant.companionG) - this.dependant.companionI;
     }
 }
-
-module.exports = Capacitor;

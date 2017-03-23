@@ -1,15 +1,14 @@
-const 
-    { 
+import { 
         VoltageSource,
         CurrentSource,
         Resistor,
         Wire,
         Ground 
-    } = require('../src/AllComponents.js'),
-    ComponentType = require('../src/ComponentType.js');
+    } from '../src/AllComponents.js';
 
-const { WORKING_CIRCUIT } = require('./test_data.spec.js'),
-    Traverser = require('../src/Traverser.js');
+import ComponentType from '../src/ComponentType.js';
+import WORKING_CIRCUIT from './test_data.spec.js';
+import Traverser from '../src/Traverser.js';
 
 describe('Traverser Module', () => {
 

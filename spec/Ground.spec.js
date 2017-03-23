@@ -1,6 +1,6 @@
-const Ground = require('../src/Ground.js'),
-   Pin = require('../src/Pin.js'),
-   ComponentType = require('../src/ComponentType.js');;
+import Ground from '../src/Ground.js';
+import Pin from '../src/Pin.js';
+import ComponentType from '../src/ComponentType.js';
 
 describe('Ground', () => {
 

@@ -1,13 +1,13 @@
 // @flow
 
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    ComponentType = require('./ComponentType.js');
+import Component from './Component.js';
+import Pin from './Pin.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * CurrentSource class
  */
-class CurrentSource extends Component {
+export default class CurrentSource extends Component {
 
     /**
      * Creates an instance of CurrentSource.
@@ -48,5 +48,3 @@ class CurrentSource extends Component {
         this.dependant.V = Math.abs(p0 - p1);
     }
 }
-
-module.exports = CurrentSource;

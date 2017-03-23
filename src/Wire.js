@@ -1,15 +1,15 @@
 // @flow
 
-const Component = require('./Component.js'),
-    Pin = require('./Pin.js'),
-    VoltageSource = require('./VoltageSource.js'),
-    ComponentType = require('./ComponentType.js');
+import Component from './Component.js';
+import Pin from './Pin.js';
+import VoltageSource from './VoltageSource.js';
+import ComponentType from './ComponentType.js';
 
 /**
  * Wire class
  * A zero voltage source
  */
-class Wire extends VoltageSource {
+export default class Wire extends VoltageSource {
 
     /**
      * Creates an instance of Wire.
@@ -32,4 +32,3 @@ class Wire extends VoltageSource {
     }
 }
 
-module.exports = Wire;

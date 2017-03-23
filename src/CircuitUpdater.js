@@ -1,6 +1,6 @@
 // @flow
 
-const ComponentType = require('./ComponentType.js');
+import ComponentType from './ComponentType.js';
 
 /**
  * Singleton class.
@@ -55,4 +55,6 @@ class CircuitUpdater {
     }
 }
 
-module.exports = new CircuitUpdater();
+const Singleton = new CircuitUpdater;
+
+export { Singleton as default };
