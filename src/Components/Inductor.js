@@ -46,9 +46,9 @@ export default class Inductor extends Component {
         matrixY.data[from][to]   += -this.dependant.companionG;
 
         // Stamp the current for the companion model's current source
-        // The nodes are swapped because it is in oppsite direction
-        matrixJ.data[from][0] += this.dependant.companionI;
-        matrixJ.data[to][0]   += -this.dependant.companionI;
+        // The curren source is opposite direction of Capacitor's
+        matrixJ.data[from][0] += -this.dependant.companionI;
+        matrixJ.data[to][0]   += this.dependant.companionI;
     }
 
     /**
@@ -63,6 +63,6 @@ export default class Inductor extends Component {
         this.pins[1].V = p1;
 
         this.dependant.V = p0 - p1;
-        this.dependant.I = (this.dependant.V * this.dependant.companionG) - this.dependant.companionI;
+        this.dependant.I = (this.dependant.V * this.dependant.companionG) + this.dependant.companionI;
     }
 }
