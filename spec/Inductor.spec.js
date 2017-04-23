@@ -117,8 +117,8 @@ describe('Inductor', () => {
 
             expect(J.data).toEqual([
                 [0],
-                [companionI],
-                [-companionI]
+                [-companionI],
+                [companionI]
             ]);
         });
             
