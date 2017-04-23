@@ -7,7 +7,6 @@ describe('Board', () => {
     beforeEach(() => {
         B = new Board();
         V = new VoltageSource();
-        G = new Ground();
     });
 
     describe('add(component, pinPositions)', () => {
@@ -28,12 +27,16 @@ describe('Board', () => {
             expect(V.pins[0].position).toEqual([0,0]);
             expect(V.pins[1].position).toEqual([10,0]);
         });
+
+        it('should return the ID of the component that has just been added', () => {
+            expect(B.add(V, [[0,0], [10,0]])).toBe(V.id);
+        });
     });
 
     describe('remove(component)', () => { 
         it('should remove the component from board.grid and board.pins', () => {
             B.add(V, [[0,0], [10,0]]);
-            B.remove(V);
+            B.remove(V.id);
 
             expect(B.grid[0][0]).toEqual([]);
             expect(B.grid[10][0]).toEqual([]);

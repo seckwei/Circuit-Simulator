@@ -5,6 +5,7 @@
  */
 export default class Board {
 
+    components: {string: Component};
     grid: Pin[][][];
     pins: BoardPins;
 
@@ -12,6 +13,11 @@ export default class Board {
      * Initialises the fields
      */
     constructor() {
+        /**
+         * A dictionary of components, id => component
+         * @type {Object}
+         */
+        this.components = {};
         /**
          * Grid which holds the pins of components
          * @type {Pin[][][]}
@@ -26,11 +32,15 @@ export default class Board {
 
     /**
      * Adds a component to the board and adds the position to
-     * the respective component pins
+     * the respective component pins. Returns component id.
      * @param {Component} component 
      * @param {number[][]} pinPositions 
+     * 
+     * @returns {string} Newly added component's id
      */
     add(component: Component, pinPositions: number[][]): void {
+        this.components[component.id] = component;
+
         for(let index in component.pins) {
             let pos = pinPositions[parseInt(index)];
 
@@ -45,15 +55,19 @@ export default class Board {
             this.grid[pos[0]][pos[1]] = (this.grid[pos[0]][pos[1]] || []).concat(component.pins[index]);
             this.pins[pos.toString()] = this.grid[pos[0]][pos[1]];
         }
+
+        return component.id;
     }
 
     /**
      * Removes the given component from the board and also
      * removes the position from the respective pins
-     * @param {Component} component
+     * @param {string} component's ID
      */
-    remove(component: Component): void {
-        let pinPositions = component.pins.map(pin => {
+    remove(id: string): void {
+        let toRemove: component = this.components[id];
+
+        let pinPositions = toRemove.pins.map(pin => {
             let pos = pin.position.slice();
             pin.position = null;
             return pos;
@@ -63,13 +77,15 @@ export default class Board {
             let pinIndex = -1,
                 pinArray = this.grid[pos[0]][pos[1]];
             for(let index in pinArray) {
-                if(pinArray[index].parent.id === component.id) {
+                if(pinArray[index].parent.id === toRemove.id) {
                     pinIndex = index;
                     break;
                 }
             }
             pinArray.splice(pinIndex, 1);
         });
+        
+        delete this.components[id];
     }
 }
 
