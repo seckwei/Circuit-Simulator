@@ -93,9 +93,11 @@ export default class Matrix {
     }
 
     /**
-     * Converts row matrix to column matrix
+     * Converts row matrix to column matrix and returns it
      * @static
      * @param {number[]} row
+     * 
+     * @returns {number[][]}
      */
     static rowToCol(row: number[]): number[][] {
         return row.map(num => [num]);

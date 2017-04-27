@@ -38,7 +38,7 @@ export default class Board {
      * 
      * @returns {string} Newly added component's id
      */
-    add(component: Component, pinPositions: number[][]): void {
+    add(component: Component, pinPositions: number[][]): string {
         this.components[component.id] = component;
 
         for(let index in component.pins) {
