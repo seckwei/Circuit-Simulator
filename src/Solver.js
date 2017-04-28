@@ -39,27 +39,21 @@ export default class Solver {
 
     /**
      * Stamps Y and J matrices with the values of the components
-     * @param {BoardPins} pins 
+     * @param {BoardComponents} components 
      * @param {Matrix} Y 
      * @param {Matrix} J 
      */
-    stampMatrices(pins: BoardPins, Y: Matrix, J: Matrix): void {
-        let componentDict: {}|{string: Component} = {};
-        for(let pos in pins) {
-            pins[pos].forEach(pin => {
-                componentDict[pin.parent.id] = pin.parent;
-            });
-        }
+    stampMatrices(components: BoardComponents, Y: Matrix, J: Matrix): void {
 
         let vSourceNum = 1;
-        for(let id in componentDict) {
-            let component = componentDict[id];
+        for(let id in components) {
+            let component = components[id];
             if(component.vSourceNum !== undefined) {
                 component.vSourceNum = vSourceNum++;
             }
 
-            if(componentDict[id].type !== ComponentType.TYPE_GROUND) {
-                componentDict[id].stamp(Y, J, this.simConfig);
+            if(components[id].type !== ComponentType.TYPE_GROUND) {
+                components[id].stamp(Y, J, this.simConfig);
             }
         }
     }
@@ -68,19 +62,19 @@ export default class Solver {
      * In MNA, we have three matrices Yx = J.
      * This method solves the circuit by calculating the values for
      * matrix x and returns it.
-     * @param {BoardPins} pins 
+     * @param {BoardComponents} components 
      * @param {Pin[][]} nodes
      * 
      * @returns {number[]} solution
      */
-    solve(pins: BoardPins, nodes: Pin[][]): number[] {
+    solve(components: BoardComponents, nodes: Pin[][]): number[] {
         let numNode = nodes.length,
             numVSource = this.getNumVSource(nodes);
 
         let Y = new Matrix(numNode + numVSource),
             J = new Matrix(numNode + numVSource, 1);
 
-        this.stampMatrices(pins, Y, J);
+        this.stampMatrices(components, Y, J);
 
         // Remove the 0-th row and column because we don't need Ground nodes
         Y.data.splice(0,1);

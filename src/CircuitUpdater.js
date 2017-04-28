@@ -21,6 +21,7 @@ class CircuitUpdater {
         let vSources = {},
             updateObject = {};
 
+        // Update for node voltage
         nodes.forEach((node, index) => {
             node.forEach(pin => {
                 
@@ -37,6 +38,7 @@ class CircuitUpdater {
             });
         });
 
+        // Update for Voltage Sources' current
         for(let id in vSources) {
             updateObject[id].value.I = solution[nodes.length - 1 + vSources[id].vSourceNum];
         }

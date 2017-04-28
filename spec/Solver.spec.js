@@ -15,9 +15,9 @@ describe('Solver', () => {
         });
     });
 
-    describe('solve(Board.pins)', () => {
+    describe('solve(Board.components)', () => {
         it('should return an array which has the voltages of nodes, and current of voltage sources', () => {
-            let solution = solver.solve(Object.assign({}, WORKING_CIRCUIT.pins), WORKING_CIRCUIT.nodes_arranged.slice()),
+            let solution = solver.solve(Object.assign({}, WORKING_CIRCUIT.components), WORKING_CIRCUIT.nodes_arranged.slice()),
                 actual = solution.slice().sort(),
                 expected = WORKING_CIRCUIT.solution.slice().sort();
 

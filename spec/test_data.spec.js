@@ -1,3 +1,4 @@
+import Board from '../src/Board';
 import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/Components';
 
 const I0 = new CurrentSource(5),
@@ -16,14 +17,16 @@ const N0 = [0,10],
     N4 = [20,10],
     N5 = [10,10];
 
-I0.place([N0, N1]);
-G1.place([N0, [0,20]]);
-W2.place([N1, N2]);
-R5.place([N2, N3]);
-R6.place([N3, N4]);
-W3.place([N4, N5]);
-R7.place([N5, N0]);
-R4.place([N2, N5]);
+const B = new Board();
+
+B.add(I0, [N0, N1]);
+B.add(G1, [N0, [0,20]]);
+B.add(W2, [N1, N2]);
+B.add(R5, [N2, N3]);
+B.add(R6, [N3, N4]);
+B.add(W3, [N4, N5]);
+B.add(R7, [N5, N0]);
+B.add(R4, [N2, N5]);
 
 I0.nodes = [0,1];
 W2.nodes = [1,2];
@@ -39,40 +42,9 @@ W3.vSourceNum = 2;
 
 const WORKING_CIRCUIT = {
 
-    pins: {
-        [N0.toString()]: [
-            I0.pins[0],
-            G1.pins[0],
-            R7.pins[1]
-        ],
+    components: B.components,
 
-        [N1.toString()]: [
-            I0.pins[1],
-            W2.pins[0]
-        ],
-
-        [N2.toString()]: [
-            W2.pins[1],
-            R4.pins[0],
-            R5.pins[0]
-        ],
-
-        [N3.toString()]: [
-            R5.pins[1],
-            R6.pins[0]
-        ],
-
-        [N4.toString()]: [
-            R6.pins[1],
-            W3.pins[0]
-        ],
-
-        [N5.toString()]: [
-            R4.pins[1],
-            W3.pins[1],
-            R7.pins[0]
-        ]
-    },
+    pins: B.pins,
 
     nodes_prearranged: [
         [],
