@@ -39,8 +39,9 @@ class CircuitUpdater {
         });
 
         // Update for Voltage Sources' current
+        let numVSources = Object.keys(vSources).length;
         for(let id in vSources) {
-            updateObject[id].value.I = solution[nodes.length - 1 + vSources[id].vSourceNum];
+            updateObject[id].value.I = solution[nodes.length + numVSources - vSources[id].vSourceNum];
         }
 
         return updateObject;
