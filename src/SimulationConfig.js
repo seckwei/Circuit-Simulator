@@ -1,4 +1,6 @@
-export default {
-    timestep: 5e-5,
-    maxIteration: 100 
+let config = {
+    timestep: 5e-6,
+    maxTime: 100e-3 
 };
+
+export { config as default };

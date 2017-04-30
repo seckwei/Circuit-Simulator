@@ -33,7 +33,7 @@ export default class Inductor extends Component {
     stamp(matrixY: Matrix, matrixJ: Matrix, simConfig: Object): void {
 
         if(this.dependant.companionG == undefined) {
-            this.dependant.companionG = simConfig.timestep / 2 * this.controlled.L;
+            this.dependant.companionG = simConfig.timestep / (2 * this.controlled.L);
         }
         this.dependant.companionI = this.dependant.I + this.dependant.companionG * this.dependant.V;
 
