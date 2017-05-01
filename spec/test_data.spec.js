@@ -1,6 +1,8 @@
 import Board from '../src/Board';
 import { VoltageSource, CurrentSource, Wire, Resistor, Ground } from '../src/Components';
 
+// http://www.falstad.com/circuit/circuitjs.html?cct=$+1+0.000005+3.046768661252054+26+5+43%0Ar+224+208+224+320+0+2%0Ar+224+208+352+208+0+4%0Ar+352+208+352+320+0+6%0Ar+96+320+224+320+0+8%0Aw+224+208+96+208+0%0Aw+224+320+352+320+0%0Ai+96+320+96+208+0+5%0Ag+96+320+96+368+0%0Ao+0+64+0+4099+10+6.4+0+2+0+3%0A
+
 const I0 = new CurrentSource(5),
     G1 = new Ground(),          
     W2 = new Wire(),            
@@ -113,7 +115,7 @@ const WORKING_CIRCUIT = {
         ]
     ],
 
-    solution: [0, 48.33, 48.33, 45, 40, 40, 5, 0.83333],
+    solution: [0, 48.33, 48.33, 45, 40, 40, 0.83333, 5],
 
     updateObject: {
         I0: {
