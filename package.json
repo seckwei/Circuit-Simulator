@@ -1,0 +1,41 @@
+{
+  "name": "circuit-simulator",
+  "version": "1.0.0",
+  "description": "With inspiration, I want to learn how to develop a circuit simulator. Through documentation, I hope that it could serve as a useful and clear guideline on how to develop a circuit sim, too.\r This should not be confused with my other project 'Sirkit Circuit Simulator'; I have started a fresh project to keep these two project separated.",
+  "main": "index.js",
+  "dependencies": {
+    "numericjs": "^1.2.6"
+  },
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-class-properties": "^6.23.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-es2015": "^6.22.0",
+    "esdoc": "^0.5.2",
+    "esdoc-flow-plugin": "^1.0.0",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.4.1",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "karma-webpack": "2.0.2",
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "build": "webpack",
+    "live-test": ".\\node_modules\\.bin\\karma start",
+    "doc": ".\\node_modules\\.bin\\esdoc -c .\\doc\\esdoc.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seckwei/Circuit-Simulator.git"
+  },
+  "author": "Seck Wei, Lim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seckwei/Circuit-Simulator/issues"
+  },
+  "homepage": "https://github.com/seckwei/Circuit-Simulator#readme"
+}

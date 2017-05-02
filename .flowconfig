@@ -1,0 +1,11 @@
+[ignore]
+./node_modules
+./doc
+
+[include]
+
+[libs]
+./src/
+./typedef.js
+
+[options]
