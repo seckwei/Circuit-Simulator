@@ -1,0 +1,3813 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "src/Board.js",
+    "content": "// @flow\r\n\r\n/**\r\n * This class holds the pins of the components.\r\n */\r\nexport default class Board {\r\n\r\n    components: {string: Component};\r\n    grid: Pin[][][];\r\n    pins: BoardPins;\r\n\r\n    /**\r\n     * Initialises the fields\r\n     */\r\n    constructor() {\r\n        /**\r\n         * A dictionary of components, id => component\r\n         * @type {Object}\r\n         */\r\n        this.components = {};\r\n        /**\r\n         * Grid which holds the pins of components\r\n         * @type {Pin[][][]}\r\n         */\r\n        this.grid = [];\r\n        /**\r\n         * A dictionary, position => pins\r\n         * @type {BoardPins}\r\n         */\r\n        this.pins = {};\r\n    }\r\n\r\n    /**\r\n     * Adds a component to the board and adds the position to\r\n     * the respective component pins. Returns component id.\r\n     * @param {Component} component \r\n     * @param {number[][]} pinPositions \r\n     * \r\n     * @returns {string} Newly added component's id\r\n     */\r\n    add(component: Component, pinPositions: number[][]): string {\r\n        this.components[component.id] = component;\r\n\r\n        for(let index in component.pins) {\r\n            let pos = pinPositions[parseInt(index)];\r\n\r\n            if(pos == undefined) {\r\n                throw new Error('Missing pin position');\r\n            }\r\n\r\n            component.pins[index].position = pos;\r\n            if(this.grid[pos[0]] === undefined) {\r\n                this.grid[pos[0]] = [];\r\n            }\r\n            this.grid[pos[0]][pos[1]] = (this.grid[pos[0]][pos[1]] || []).concat(component.pins[index]);\r\n\r\n            // This means Pins and Grid share the same array of pins\r\n            // i.e. deleting from Pins will delete from Grid too, and vice versa\r\n            this.pins[pos.toString()] = this.grid[pos[0]][pos[1]];\r\n        }\r\n\r\n        return component.id;\r\n    }\r\n\r\n    /**\r\n     * Removes the given component from the board and also\r\n     * removes the position from the respective pins\r\n     * @param {string} component's ID\r\n     */\r\n    remove(id: string): void {\r\n        let toRemove: component = this.components[id];\r\n\r\n        // Get the array of pin positions from the component\r\n        let pinPositions = toRemove.pins.map(pin => {\r\n            let pos = pin.position.slice();\r\n            pin.position = null;\r\n            return pos;\r\n        });\r\n\r\n        // Remove the pins from the grid\r\n        pinPositions.forEach(pos => {\r\n            let pinIndex = -1, \r\n                pinArray = this.grid[pos[0]][pos[1]];\r\n            for(let index in pinArray) {\r\n                if(pinArray[index].parent.id === toRemove.id) {\r\n                    pinIndex = index;\r\n                    break;\r\n                }\r\n            }\r\n            pinArray.splice(pinIndex, 1);\r\n        });\r\n        \r\n        delete this.components[id];\r\n    }\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Board.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "class",
+    "name": "Board",
+    "memberof": "src/Board.js",
+    "static": true,
+    "longname": "src/Board.js~Board",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Board.js",
+    "importStyle": "Board",
+    "description": "This class holds the pins of the components.",
+    "lineNumber": 6,
+    "interface": false
+  },
+  {
+    "__docId__": 2,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Board.js~Board",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Board.js~Board#constructor",
+    "access": null,
+    "description": "Initialises the fields",
+    "lineNumber": 11,
+    "params": []
+  },
+  {
+    "__docId__": 3,
+    "kind": "member",
+    "name": "components",
+    "memberof": "src/Board.js~Board",
+    "static": false,
+    "longname": "src/Board.js~Board#components",
+    "access": null,
+    "description": "A dictionary of components, id => component",
+    "lineNumber": 16,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "member",
+    "name": "grid",
+    "memberof": "src/Board.js~Board",
+    "static": false,
+    "longname": "src/Board.js~Board#grid",
+    "access": null,
+    "description": "Grid which holds the pins of components",
+    "lineNumber": 21,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Pin[][][]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Board.js~Board",
+    "static": false,
+    "longname": "src/Board.js~Board#pins",
+    "access": null,
+    "description": "A dictionary, position => pins",
+    "lineNumber": 26,
+    "type": {
+      "nullable": null,
+      "types": [
+        "BoardPins"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "method",
+    "name": "add",
+    "memberof": "src/Board.js~Board",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Board.js~Board#add",
+    "access": null,
+    "description": "Adds a component to the board and adds the position to\nthe respective component pins. Returns component id.",
+    "lineNumber": 37,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string} Newly added component's id"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Component"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "component",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number[][]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pinPositions",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "Newly added component's id"
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "method",
+    "name": "remove",
+    "memberof": "src/Board.js~Board",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Board.js~Board#remove",
+    "access": null,
+    "description": "Removes the given component from the board and also\nremoves the position from the respective pins",
+    "lineNumber": 66,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "component's",
+        "description": "ID"
+      }
+    ]
+  },
+  {
+    "__docId__": 8,
+    "kind": "file",
+    "name": "src/CircuitUpdater.js",
+    "content": "// @flow\r\n\r\nimport ComponentType from './ComponentType.js';\r\n\r\n/**\r\n * Singleton class.\r\n * Responsible for updating the circuit components with the given solution from the Solver\r\n */\r\nclass CircuitUpdater {\r\n    \r\n    constructor() {}\r\n\r\n    /**\r\n     * Creates and returns an object which has all the new values to update the components\r\n     * @param {Pin[][]} nodes \r\n     * @param {number[]} solution\r\n     * \r\n     * @returns {Ojbect} updateObject\r\n     * @example \r\n     * // The return object's structure\r\n     *  {\r\n     *      <component id>: {\r\n     *          component: <component obj>,\r\n     *          values: {\r\n     *              pins: <number[]>,   // node voltage for each pin\r\n     *              I: <number>         // current, only for voltage source\r\n     *          }\r\n     *      }\r\n     *  }\r\n     */\r\n    getUpdateObject(nodes: Pin[][], solution: number[]): Object {\r\n        let vSources = {},\r\n            updateObject = {};\r\n\r\n        nodes.forEach((node, index) => {\r\n            node.forEach(pin => {\r\n\r\n                // Get a list of voltage source components, will be used later                \r\n                if(pin.parent.vSourceNum !== undefined) {\r\n                    vSources[pin.parent.id] = pin.parent;\r\n                }\r\n\r\n                if(pin.parent.type !== ComponentType.TYPE_GROUND) {\r\n\r\n                    // Initialise the update obj for this component if hasn't already been made\r\n                    if(updateObject[pin.parent.id] == undefined) {\r\n                        updateObject[pin.parent.id] = {\r\n                            component: pin.parent,\r\n                            value: { pins: [] } \r\n                        };\r\n                    }\r\n                    // Finally, place the solution into the update object\r\n                    updateObject[pin.parent.id].value.pins[pin.index] = solution[index];\r\n                }\r\n            });\r\n        });\r\n\r\n        // Update for Voltage Sources' current\r\n        let numVSources = Object.keys(vSources).length;\r\n        for(let id in vSources) {\r\n            updateObject[id].value.I = solution[nodes.length + numVSources - vSources[id].vSourceNum];\r\n        }\r\n\r\n        return updateObject;\r\n    }\r\n\r\n    /**\r\n     * Calls each component's update() method\r\n     * @param {Object} updateObject \r\n     */\r\n    update(updateObject: Object): void {\r\n        for(let id in updateObject) {\r\n            updateObject[id].component.update(updateObject[id].value);\r\n        }\r\n    }\r\n}\r\n\r\nconst Singleton = new CircuitUpdater;\r\n\r\nexport { Singleton as default };",
+    "static": true,
+    "longname": "src/CircuitUpdater.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 9,
+    "kind": "class",
+    "name": "CircuitUpdater",
+    "memberof": "src/CircuitUpdater.js",
+    "static": true,
+    "longname": "src/CircuitUpdater.js~CircuitUpdater",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/CircuitUpdater.js",
+    "importStyle": null,
+    "description": "Singleton class.\nResponsible for updating the circuit components with the given solution from the Solver",
+    "lineNumber": 7,
+    "interface": false
+  },
+  {
+    "__docId__": 10,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/CircuitUpdater.js~CircuitUpdater",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/CircuitUpdater.js~CircuitUpdater#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": []
+  },
+  {
+    "__docId__": 11,
+    "kind": "method",
+    "name": "getUpdateObject",
+    "memberof": "src/CircuitUpdater.js~CircuitUpdater",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/CircuitUpdater.js~CircuitUpdater#getUpdateObject",
+    "access": null,
+    "description": "Creates and returns an object which has all the new values to update the components",
+    "examples": [
+      "// The return object's structure\n {\n     <component id>: {\n         component: <component obj>,\n         values: {\n             pins: <number[]>,   // node voltage for each pin\n             I: <number>         // current, only for voltage source\n         }\n     }\n }"
+    ],
+    "lineNumber": 29,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Ojbect} updateObject"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Pin[][]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodes",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "solution",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Ojbect"
+      ],
+      "spread": false,
+      "description": "updateObject"
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/CircuitUpdater.js~CircuitUpdater",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/CircuitUpdater.js~CircuitUpdater#update",
+    "access": null,
+    "description": "Calls each component's update() method",
+    "lineNumber": 69,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "updateObject",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 13,
+    "kind": "variable",
+    "name": "Singleton",
+    "memberof": "src/CircuitUpdater.js",
+    "static": true,
+    "longname": "src/CircuitUpdater.js~Singleton",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/CircuitUpdater.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 76,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "CircuitUpdater"
+      ]
+    }
+  },
+  {
+    "__docId__": 14,
+    "kind": "file",
+    "name": "src/Components/Capacitor.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * Utilising Norton Companion Model and Trapezoidal Approximation\r\n * for Transient Analysis\r\n */\r\nexport default class Capacitor extends Component {\r\n\r\n    constructor(initCapacitance: number = 1e-6) {\r\n        super('C');\r\n        this.type = ComponentType.TYPE_CAPACITOR;\r\n        this.controlled = { C: initCapacitance };\r\n        this.dependant = {\r\n            // Initial state\r\n            I: 0,\r\n            V: 0,\r\n            // Companion model's values\r\n            companionG: undefined,\r\n            companionI: undefined\r\n        };\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n    }\r\n\r\n    /**\r\n     * Stamps the Y and J matrices\r\n     * @param {Matrix} matrixY \r\n     * @param {Matrix} matrixJ\r\n     * @param {Object} simConfig\r\n     */\r\n    stamp(matrixY: Matrix, matrixJ: Matrix, simConfig: Object): void {\r\n\r\n        if(this.dependant.companionG == undefined) {\r\n            this.dependant.companionG = 2 * this.controlled.C / simConfig.timestep;\r\n        }\r\n        this.dependant.companionI = this.dependant.I + this.dependant.companionG * this.dependant.V;\r\n\r\n        const [from, to] = this.nodes;\r\n\r\n        // Stamp the conductance for the companion model's resistor\r\n        matrixY.data[to][to]     += this.dependant.companionG;\r\n        matrixY.data[from][from] += this.dependant.companionG;\r\n        matrixY.data[to][from]   += -this.dependant.companionG;\r\n        matrixY.data[from][to]   += -this.dependant.companionG;\r\n\r\n        // Stamp the current for the companion model's current source\r\n        // The nodes are swapped because it is in oppsite direction\r\n        matrixJ.data[from][0] += this.dependant.companionI;\r\n        matrixJ.data[to][0]   += -this.dependant.companionI;\r\n    }\r\n\r\n    /**\r\n     * Updates this component's dependant values and pins' voltage.\r\n     * Called from CircuitUpdater update() method\r\n     * @param {Object} value \r\n     */\r\n    update(value: Object): void {\r\n        let [p0, p1] = value.pins;\r\n\r\n        this.pins[0].V = p0;\r\n        this.pins[1].V = p1;\r\n\r\n        this.dependant.V = p0 - p1;\r\n        this.dependant.I = (this.dependant.V * this.dependant.companionG) - this.dependant.companionI;\r\n    }\r\n}",
+    "static": true,
+    "longname": "src/Components/Capacitor.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 15,
+    "kind": "class",
+    "name": "Capacitor",
+    "memberof": "src/Components/Capacitor.js",
+    "static": true,
+    "longname": "src/Components/Capacitor.js~Capacitor",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Capacitor.js",
+    "importStyle": "Capacitor",
+    "description": "Utilising Norton Companion Model and Trapezoidal Approximation\nfor Transient Analysis",
+    "lineNumber": 9,
+    "interface": false,
+    "extends": [
+      "src/Components/Component.js~Component"
+    ]
+  },
+  {
+    "__docId__": 16,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "initCapacitance",
+        "optional": true,
+        "types": [
+          "number"
+        ],
+        "defaultRaw": 0.000001,
+        "defaultValue": "0.000001"
+      }
+    ]
+  },
+  {
+    "__docId__": 17,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#controlled",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"C\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 19,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"I\": *, \"V\": *, \"companionG\": *, \"companionI\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#stamp",
+    "access": null,
+    "description": "Stamps the Y and J matrices",
+    "lineNumber": 32,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixY",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixJ",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "simConfig",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 22,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/Capacitor.js~Capacitor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Capacitor.js~Capacitor#update",
+    "access": null,
+    "description": "Updates this component's dependant values and pins' voltage.\nCalled from CircuitUpdater update() method",
+    "lineNumber": 58,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 23,
+    "kind": "file",
+    "name": "src/Components/Component.js",
+    "content": "// @flow\r\n\r\n/**\r\n * Component class\r\n */\r\nexport default class Component {\r\n\r\n    static idCount: number;\r\n    \r\n    id: string;\r\n    label: string;\r\n    type: Symbol;\r\n    controlled: Object;\r\n    dependant: Object;\r\n    pins: Pin[];\r\n    nodes: number[];\r\n\r\n    /**\r\n     * Creates an instance of Component.\r\n     * @param {string} prefix \r\n     */\r\n    constructor(prefix: string) {\r\n        if(this.constructor === Component) {\r\n            throw TypeError('Unable to instantiate abstract Component class');\r\n        }\r\n\r\n        /**\r\n         * Id of the component. Example: I1, R2, V3...\r\n         * @type {string}\r\n         */\r\n        this.id = prefix + Component.idCount;\r\n\r\n        /**\r\n         * Static Id counter i.e. each component has ascending order of Id number\r\n         * @type {number}\r\n         */\r\n        ++Component.idCount;\r\n\r\n        /**\r\n         * User defined label - not used at the moment\r\n         * @type {string}\r\n         */\r\n        this.label = 'unlabelled';\r\n\r\n        /**\r\n         * Type of component. Example: Source, Resistor...\r\n         * @type {Symbol}\r\n         */\r\n        this.type = Symbol('untyped');\r\n\r\n        /**\r\n         * Object that holds the variables that are user-controlled\r\n         * @type {Object}\r\n         */\r\n        this.controlled = {};\r\n\r\n        /**\r\n         * Object that holds the variables that are calculated from the analysis\r\n         * @type {Object}\r\n         */\r\n        this.dependant = {};\r\n\r\n        /**\r\n         * Array of this component's pins\r\n         * @type {Pin[]}\r\n         */\r\n        this.pins = [];\r\n\r\n        /**\r\n         * The nodes this component's pins are connected to\r\n         * @type {number[]}\r\n         */\r\n        this.nodes = [];\r\n    }\r\n\r\n    /**\r\n     * Returns an array of the other pins aside from the pin index provided\r\n     * @public\r\n     * @param {number} pinIndex \r\n     * @returns {Pin[]}\r\n     */\r\n    otherPins(pinIndex: number): Pin[] {\r\n        let copy = this.pins.slice();\r\n        copy.splice(pinIndex, 1);\r\n        return copy;\r\n    }\r\n\r\n    /**\r\n     * Stamps the Y and J matrices\r\n     * @public\r\n     * @abstract\r\n     * @param {Matrix} matrixY \r\n     * @param {Matrix} matrixJ\r\n     * @param {Object} simConfig\r\n     */\r\n    stamp(matrixY: Matrix, matrixJ: Matrix, simConfig: Object): void {\r\n        throw TypeError('Abstract function stamp() not overriden');\r\n    }\r\n    \r\n    /**\r\n     * Updates the component's dependant field and the pins' voltage\r\n     * @public\r\n     * @abstract\r\n     * @param {Object} values\r\n     */\r\n    update(values: {string: number}): void {\r\n        throw TypeError('Abstract function update() not overriden');\r\n    }\r\n}\r\n\r\nComponent.idCount = 0;\r\n\r\n",
+    "static": true,
+    "longname": "src/Components/Component.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 24,
+    "kind": "class",
+    "name": "Component",
+    "memberof": "src/Components/Component.js",
+    "static": true,
+    "longname": "src/Components/Component.js~Component",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Component.js",
+    "importStyle": "Component",
+    "description": "Component class",
+    "lineNumber": 6,
+    "interface": false
+  },
+  {
+    "__docId__": 25,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Component.js~Component",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Component.js~Component#constructor",
+    "access": null,
+    "description": "Creates an instance of Component.",
+    "lineNumber": 12,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "prefix",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 26,
+    "kind": "member",
+    "name": "id",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#id",
+    "access": null,
+    "description": "Id of the component. Example: I1, R2, V3...",
+    "lineNumber": 21,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "member",
+    "name": "label",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#label",
+    "access": null,
+    "description": "User defined label - not used at the moment",
+    "lineNumber": 33,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 28,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#type",
+    "access": null,
+    "description": "Type of component. Example: Source, Resistor...",
+    "lineNumber": 39,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Symbol"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 29,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#controlled",
+    "access": null,
+    "description": "Object that holds the variables that are user-controlled",
+    "lineNumber": 45,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#dependant",
+    "access": null,
+    "description": "Object that holds the variables that are calculated from the analysis",
+    "lineNumber": 51,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 31,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#pins",
+    "access": null,
+    "description": "Array of this component's pins",
+    "lineNumber": 57,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Pin[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 32,
+    "kind": "member",
+    "name": "nodes",
+    "memberof": "src/Components/Component.js~Component",
+    "static": false,
+    "longname": "src/Components/Component.js~Component#nodes",
+    "access": null,
+    "description": "The nodes this component's pins are connected to",
+    "lineNumber": 63,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number[]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 33,
+    "kind": "method",
+    "name": "otherPins",
+    "memberof": "src/Components/Component.js~Component",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Component.js~Component#otherPins",
+    "access": "public",
+    "description": "Returns an array of the other pins aside from the pin index provided",
+    "lineNumber": 72,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Pin[]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pinIndex",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Pin[]"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 34,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/Component.js~Component",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Component.js~Component#stamp",
+    "access": "public",
+    "description": "Stamps the Y and J matrices",
+    "lineNumber": 86,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixY",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixJ",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "simConfig",
+        "description": ""
+      }
+    ],
+    "abstract": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/Component.js~Component",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Component.js~Component#update",
+    "access": "public",
+    "description": "Updates the component's dependant field and the pins' voltage",
+    "lineNumber": 96,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "values",
+        "description": ""
+      }
+    ],
+    "abstract": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "file",
+    "name": "src/Components/CurrentSource.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * CurrentSource class\r\n */\r\nexport default class CurrentSource extends Component {\r\n\r\n    /**\r\n     * Creates an instance of CurrentSource.\r\n     * @param {number} [initCurrent=5] \r\n     */\r\n    constructor(initCurrent: number = 5) {\r\n        super('I');\r\n        this.type = ComponentType.TYPE_SOURCE;\r\n        this.controlled = { I: initCurrent };\r\n        this.dependant = { V: undefined };\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n    }\r\n\r\n    /**\r\n     * Stamps the 'current' value only on the J matrix\r\n     * @param {Matrix} matrixY \r\n     * @param {Matrix} matrixJ \r\n     */\r\n    stamp(matrixY: Matrix, matrixJ: Matrix):void {\r\n        const [from, to] = this.nodes,\r\n            I = this.controlled.I;\r\n\r\n        matrixJ.data[from][0] += -I;\r\n        matrixJ.data[to][0] += I;\r\n    }\r\n\r\n    /**\r\n     * Updates this component's dependant values and pins' voltage.\r\n     * Called from CircuitUpdater update() method\r\n     * @param {Object} value \r\n     */\r\n    update(value: Object): void {\r\n        let [p0, p1] = value.pins;\r\n       \r\n        this.pins[0].V = p0;\r\n        this.pins[1].V = p1;\r\n        \r\n        this.dependant.V = Math.abs(p0 - p1);\r\n    }\r\n}",
+    "static": true,
+    "longname": "src/Components/CurrentSource.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 37,
+    "kind": "class",
+    "name": "CurrentSource",
+    "memberof": "src/Components/CurrentSource.js",
+    "static": true,
+    "longname": "src/Components/CurrentSource.js~CurrentSource",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/CurrentSource.js",
+    "importStyle": "CurrentSource",
+    "description": "CurrentSource class",
+    "lineNumber": 8,
+    "interface": false,
+    "extends": [
+      "src/Components/Component.js~Component"
+    ]
+  },
+  {
+    "__docId__": 38,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#constructor",
+    "access": null,
+    "description": "Creates an instance of CurrentSource.",
+    "lineNumber": 14,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "5",
+        "defaultRaw": 5,
+        "name": "initCurrent",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 39,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 40,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#controlled",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"I\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 41,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"V\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 42,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 43,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#stamp",
+    "access": null,
+    "description": "Stamps the 'current' value only on the J matrix",
+    "lineNumber": 27,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixY",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixJ",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 44,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/CurrentSource.js~CurrentSource",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/CurrentSource.js~CurrentSource#update",
+    "access": null,
+    "description": "Updates this component's dependant values and pins' voltage.\nCalled from CircuitUpdater update() method",
+    "lineNumber": 40,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 45,
+    "kind": "file",
+    "name": "src/Components/Ground.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * Ground class\r\n */\r\nexport default class Ground extends Component {\r\n\r\n    /**\r\n     * Creates an instance of Ground.\r\n     */\r\n    constructor() {\r\n        super('G');\r\n        this.type = ComponentType.TYPE_GROUND;\r\n        this.controlled = { V: 0 };\r\n        this.dependant = {};\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n    }\r\n\r\n    /**\r\n     * Throw error if this is called.\r\n     * This method is implemented to override the parent's.\r\n     */\r\n    stamp(): void {\r\n        throw new TypeError('Ground component does not need to stamp any matrices!');\r\n    }\r\n}",
+    "static": true,
+    "longname": "src/Components/Ground.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 46,
+    "kind": "class",
+    "name": "Ground",
+    "memberof": "src/Components/Ground.js",
+    "static": true,
+    "longname": "src/Components/Ground.js~Ground",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Ground.js",
+    "importStyle": "Ground",
+    "description": "Ground class",
+    "lineNumber": 8,
+    "interface": false,
+    "extends": [
+      "src/Components/Component.js~Component"
+    ]
+  },
+  {
+    "__docId__": 47,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Ground.js~Ground",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Ground.js~Ground#constructor",
+    "access": null,
+    "description": "Creates an instance of Ground.",
+    "lineNumber": 13,
+    "params": []
+  },
+  {
+    "__docId__": 48,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/Ground.js~Ground",
+    "static": false,
+    "longname": "src/Components/Ground.js~Ground#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 49,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/Ground.js~Ground",
+    "static": false,
+    "longname": "src/Components/Ground.js~Ground#controlled",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"V\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 50,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/Ground.js~Ground",
+    "static": false,
+    "longname": "src/Components/Ground.js~Ground#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{}"
+      ]
+    }
+  },
+  {
+    "__docId__": 51,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/Ground.js~Ground",
+    "static": false,
+    "longname": "src/Components/Ground.js~Ground#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 52,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/Ground.js~Ground",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Ground.js~Ground#stamp",
+    "access": null,
+    "description": "Throw error if this is called.\nThis method is implemented to override the parent's.",
+    "lineNumber": 25,
+    "params": []
+  },
+  {
+    "__docId__": 53,
+    "kind": "file",
+    "name": "src/Components/index.js",
+    "content": "import VoltageSource from './VoltageSource.js';\r\nimport CurrentSource from './CurrentSource.js';\r\nimport Capacitor from './Capacitor.js';\r\nimport Inductor from './Inductor.js';\r\nimport Resistor from './Resistor.js';\r\nimport Ground from './Ground.js';\r\nimport Wire from './Wire.js';\r\n\r\nexport {\r\n    VoltageSource,\r\n    CurrentSource,\r\n    Capacitor,\r\n    Inductor,\r\n    Resistor,\r\n    Ground,\r\n    Wire,\r\n};",
+    "static": true,
+    "longname": "src/Components/index.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 54,
+    "kind": "file",
+    "name": "src/Components/Inductor.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * Utilising Norton Companion Model and Trapezoidal Approximation\r\n * for Transient Analysis\r\n */\r\nexport default class Inductor extends Component {\r\n\r\n    constructor(initInductance: number = 1) {\r\n        super('L');\r\n        this.type = ComponentType.TYPE_INDUCTOR;\r\n        this.controlled = { L: initInductance };\r\n        this.dependant = {\r\n            // Initial state\r\n            I: 0,\r\n            V: 0,\r\n            // Companion model's values\r\n            companionG: undefined,\r\n            companionI: undefined\r\n        };\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n    }\r\n\r\n    /**\r\n     * Stamps the Y and J matrices\r\n     * @param {Matrix} matrixY \r\n     * @param {Matrix} matrixJ\r\n     * @param {Object} simConfig\r\n     */\r\n    stamp(matrixY: Matrix, matrixJ: Matrix, simConfig: Object): void {\r\n\r\n        if(this.dependant.companionG == undefined) {\r\n            this.dependant.companionG = simConfig.timestep / (2 * this.controlled.L);\r\n        }\r\n        this.dependant.companionI = this.dependant.I + this.dependant.companionG * this.dependant.V;\r\n\r\n        const [from, to] = this.nodes;\r\n\r\n        // Stamp the conductance for the companion model's resistor\r\n        matrixY.data[to][to]     += this.dependant.companionG;\r\n        matrixY.data[from][from] += this.dependant.companionG;\r\n        matrixY.data[to][from]   += -this.dependant.companionG;\r\n        matrixY.data[from][to]   += -this.dependant.companionG;\r\n\r\n        // Stamp the current for the companion model's current source\r\n        // The curren source is opposite direction of Capacitor's\r\n        matrixJ.data[from][0] += -this.dependant.companionI;\r\n        matrixJ.data[to][0]   += this.dependant.companionI;\r\n    }\r\n\r\n    /**\r\n     * Updates this component's dependant values and pins' voltage.\r\n     * Called from CircuitUpdater update() method\r\n     * @param {Object} value \r\n     */\r\n    update(value: Object): void {\r\n        let [p0, p1] = value.pins;\r\n\r\n        this.pins[0].V = p0;\r\n        this.pins[1].V = p1;\r\n\r\n        this.dependant.V = p0 - p1;\r\n        this.dependant.I = (this.dependant.V * this.dependant.companionG) + this.dependant.companionI;\r\n    }\r\n}",
+    "static": true,
+    "longname": "src/Components/Inductor.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 55,
+    "kind": "class",
+    "name": "Inductor",
+    "memberof": "src/Components/Inductor.js",
+    "static": true,
+    "longname": "src/Components/Inductor.js~Inductor",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Inductor.js",
+    "importStyle": "Inductor",
+    "description": "Utilising Norton Companion Model and Trapezoidal Approximation\nfor Transient Analysis",
+    "lineNumber": 9,
+    "interface": false,
+    "extends": [
+      "src/Components/Component.js~Component"
+    ]
+  },
+  {
+    "__docId__": 56,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "initInductance",
+        "optional": true,
+        "types": [
+          "number"
+        ],
+        "defaultRaw": 1,
+        "defaultValue": "1"
+      }
+    ]
+  },
+  {
+    "__docId__": 57,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 58,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#controlled",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"L\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 59,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"I\": *, \"V\": *, \"companionG\": *, \"companionI\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 60,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 61,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#stamp",
+    "access": null,
+    "description": "Stamps the Y and J matrices",
+    "lineNumber": 32,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixY",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixJ",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "simConfig",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 62,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/Inductor.js~Inductor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Inductor.js~Inductor#update",
+    "access": null,
+    "description": "Updates this component's dependant values and pins' voltage.\nCalled from CircuitUpdater update() method",
+    "lineNumber": 58,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 63,
+    "kind": "file",
+    "name": "src/Components/Pin.js",
+    "content": "// @flow\r\n\r\n/**\r\n * Pin class\r\n */\r\nexport default class Pin {\r\n    \r\n\tparent : Component\r\n\tindex : number\r\n\tposition : number[]|null\r\n\tvisited : boolean\r\n    V: number\r\n\r\n    /**\r\n     * Creates an instance of Pin.\r\n     * @param {Component} parent \r\n     * @param {number} index \r\n     */\r\n\tconstructor(parent: Component, index: number) {\r\n        /**\r\n         * Component that \"owns\" this pin\r\n         * @type {Component}\r\n         */\r\n\t\tthis.parent = parent;\r\n        /** \r\n         * Index of this pin in the parent\r\n         * @type {number}\r\n        */\r\n\t\tthis.index = index;\r\n        /**\r\n         * Position on the board\r\n         * @type {number[][] | null} [position=null]\r\n         */\r\n        this.position = null;\r\n        /**\r\n         * Visited by the Traverser during parsing\r\n         * @type {boolean} [visited=false]\r\n         */\r\n        this.visited = false;\r\n        /**\r\n         * Voltage on this pin\r\n         * @type {number} [V=0]\r\n         */\r\n        this.V = 0;\r\n\t}\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Components/Pin.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 64,
+    "kind": "class",
+    "name": "Pin",
+    "memberof": "src/Components/Pin.js",
+    "static": true,
+    "longname": "src/Components/Pin.js~Pin",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Pin.js",
+    "importStyle": "Pin",
+    "description": "Pin class",
+    "lineNumber": 6,
+    "interface": false
+  },
+  {
+    "__docId__": 65,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Pin.js~Pin",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Pin.js~Pin#constructor",
+    "access": null,
+    "description": "Creates an instance of Pin.",
+    "lineNumber": 13,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Component"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "parent",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "index",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 66,
+    "kind": "member",
+    "name": "parent",
+    "memberof": "src/Components/Pin.js~Pin",
+    "static": false,
+    "longname": "src/Components/Pin.js~Pin#parent",
+    "access": null,
+    "description": "Component that \"owns\" this pin",
+    "lineNumber": 18,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Component"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "member",
+    "name": "index",
+    "memberof": "src/Components/Pin.js~Pin",
+    "static": false,
+    "longname": "src/Components/Pin.js~Pin#index",
+    "access": null,
+    "description": "Index of this pin in the parent",
+    "lineNumber": 23,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "member",
+    "name": "position",
+    "memberof": "src/Components/Pin.js~Pin",
+    "static": false,
+    "longname": "src/Components/Pin.js~Pin#position",
+    "access": null,
+    "description": "Position on the board",
+    "lineNumber": 28,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number[][] ",
+        " null"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "member",
+    "name": "visited",
+    "memberof": "src/Components/Pin.js~Pin",
+    "static": false,
+    "longname": "src/Components/Pin.js~Pin#visited",
+    "access": null,
+    "description": "Visited by the Traverser during parsing",
+    "lineNumber": 33,
+    "type": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "member",
+    "name": "V",
+    "memberof": "src/Components/Pin.js~Pin",
+    "static": false,
+    "longname": "src/Components/Pin.js~Pin#V",
+    "access": null,
+    "description": "Voltage on this pin",
+    "lineNumber": 38,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "file",
+    "name": "src/Components/Resistor.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * Resistor class\r\n */\r\nexport default class Resistor extends Component {\r\n\r\n    /**\r\n     * Creates an instance of Resistor.\r\n     * @param {number} [initResistance=5] \r\n     */\r\n    constructor(initResistance: number = 5) {\r\n        super('R');\r\n        this.type = ComponentType.TYPE_RESISTOR;\r\n        this.controlled = { R: initResistance };\r\n        this.dependant = { I: undefined, V: undefined };\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n    }\r\n\r\n    /**\r\n     * Stamps the just conductance matrix - matrixY\r\n     * @param {Matrix} matrixY \r\n     */\r\n    stamp(matrixY: Matrix):void {\r\n        const G = 1 / this.controlled.R, // conductance = 1/resistance\r\n            [from, to] = this.nodes;\r\n\r\n        matrixY.data[to][to] += G;\r\n        matrixY.data[from][from] += G;\r\n        matrixY.data[to][from] += -G;\r\n        matrixY.data[from][to] += -G;\r\n    }\r\n\r\n    /**\r\n     * Updates this component's dependant values and pins' voltage.\r\n     * Called from CircuitUpdater update() method\r\n     * @param {Object} value \r\n     */\r\n    update(value: Object): void {\r\n        let [p0, p1] = value.pins;\r\n       \r\n        this.pins[0].V = p0;\r\n        this.pins[1].V = p1;\r\n        \r\n        this.dependant.V = Math.abs(p0 - p1);\r\n        this.dependant.I = this.dependant.V / this.controlled.R;\r\n    }\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Components/Resistor.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 72,
+    "kind": "class",
+    "name": "Resistor",
+    "memberof": "src/Components/Resistor.js",
+    "static": true,
+    "longname": "src/Components/Resistor.js~Resistor",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Resistor.js",
+    "importStyle": "Resistor",
+    "description": "Resistor class",
+    "lineNumber": 8,
+    "interface": false,
+    "extends": [
+      "src/Components/Component.js~Component"
+    ]
+  },
+  {
+    "__docId__": 73,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#constructor",
+    "access": null,
+    "description": "Creates an instance of Resistor.",
+    "lineNumber": 14,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "5",
+        "defaultRaw": 5,
+        "name": "initResistance",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 74,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 75,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#controlled",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"R\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 76,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"I\": *, \"V\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 77,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 78,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#stamp",
+    "access": null,
+    "description": "Stamps the just conductance matrix - matrixY",
+    "lineNumber": 26,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixY",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 79,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/Resistor.js~Resistor",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Resistor.js~Resistor#update",
+    "access": null,
+    "description": "Updates this component's dependant values and pins' voltage.\nCalled from CircuitUpdater update() method",
+    "lineNumber": 42,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 80,
+    "kind": "file",
+    "name": "src/Components/VoltageSource.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * VoltageSource class\r\n */\r\nexport default class VoltageSource extends Component {\r\n\r\n    vSourceNum: number;\r\n\r\n    /**\r\n     * Creates an instance of VoltageSource.\r\n     * @param {number} [initVoltage=5]\r\n     * @param {string} [symbol=V]\r\n     */\r\n    constructor(initVoltage: number = 5, symbol: string = 'V') {\r\n        super(symbol);\r\n        this.type = ComponentType.TYPE_SOURCE;\r\n        this.controlled = { V: initVoltage };\r\n        this.dependant = { I: undefined };\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n\r\n        /**\r\n         * Denotes the n-th voltage source. This is so that we know\r\n         * which row and col of the Y and J matrices to stamp.\r\n         * @type {number}\r\n         */\r\n        this.vSourceNum = 0;\r\n    }\r\n\r\n    /**\r\n     * Stamps the matrices Y and J\r\n     * @param {Matrix} matrixY \r\n     * @param {Matrix} matrixJ\r\n     */\r\n    stamp(matrixY: Matrix, matrixJ: Matrix): void {\r\n        const [from, to] = this.nodes,\r\n            vSourceIndex = matrixY.data.length - this.vSourceNum;\r\n\r\n        matrixY.data[vSourceIndex][from] = matrixY.data[from][vSourceIndex] = 1;\r\n        matrixY.data[vSourceIndex][to] = matrixY.data[to][vSourceIndex] = -1;\r\n\r\n        matrixJ.data[vSourceIndex][0] = this.controlled.V\r\n    }\r\n\r\n    /**\r\n     * Updates this component's dependant values and pins' voltage.\r\n     * Called from CircuitUpdater update() method\r\n     * @param {Object} value \r\n     */\r\n    update(value: Object): void {\r\n        this.dependant.I = value.I;\r\n        this.pins[0].V = value.pins[0];\r\n        this.pins[1].V = value.pins[1];\r\n    }\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Components/VoltageSource.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 81,
+    "kind": "class",
+    "name": "VoltageSource",
+    "memberof": "src/Components/VoltageSource.js",
+    "static": true,
+    "longname": "src/Components/VoltageSource.js~VoltageSource",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/VoltageSource.js",
+    "importStyle": "VoltageSource",
+    "description": "VoltageSource class",
+    "lineNumber": 8,
+    "interface": false,
+    "extends": [
+      "src/Components/Component.js~Component"
+    ]
+  },
+  {
+    "__docId__": 82,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#constructor",
+    "access": null,
+    "description": "Creates an instance of VoltageSource.",
+    "lineNumber": 15,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "5",
+        "defaultRaw": 5,
+        "name": "initVoltage",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "V",
+        "defaultRaw": "V",
+        "name": "symbol",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 83,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 84,
+    "kind": "member",
+    "name": "controlled",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#controlled",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"V\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 85,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"I\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 86,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 87,
+    "kind": "member",
+    "name": "vSourceNum",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#vSourceNum",
+    "access": null,
+    "description": "Denotes the n-th voltage source. This is so that we know\nwhich row and col of the Y and J matrices to stamp.",
+    "lineNumber": 27,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 88,
+    "kind": "method",
+    "name": "stamp",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#stamp",
+    "access": null,
+    "description": "Stamps the matrices Y and J",
+    "lineNumber": 35,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixY",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "matrixJ",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 89,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/VoltageSource.js~VoltageSource",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/VoltageSource.js~VoltageSource#update",
+    "access": null,
+    "description": "Updates this component's dependant values and pins' voltage.\nCalled from CircuitUpdater update() method",
+    "lineNumber": 50,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 90,
+    "kind": "file",
+    "name": "src/Components/Wire.js",
+    "content": "// @flow\r\n\r\nimport Component from './Component.js';\r\nimport Pin from './Pin.js';\r\nimport VoltageSource from './VoltageSource.js';\r\nimport ComponentType from '../ComponentType.js';\r\n\r\n/**\r\n * Wire class\r\n * A zero voltage source\r\n */\r\nexport default class Wire extends VoltageSource {\r\n\r\n    /**\r\n     * Creates an instance of Wire.\r\n     */\r\n    constructor() {\r\n        super(0, 'W');\r\n        this.type = ComponentType.TYPE_CONNECTOR;\r\n        this.dependant = { V: undefined, I: undefined };\r\n        this.pins = [new Pin(this, 0), new Pin(this, 1)];\r\n    }\r\n\r\n    /**\r\n     * Updates this component's dependant values and pins' voltage.\r\n     * Called from CircuitUpdater update() method\r\n     * @param {Object} value \r\n     */\r\n    update(value: Object): void {\r\n        super.update(value);\r\n        this.dependant.V = value.pins[0];\r\n    }\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Components/Wire.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 91,
+    "kind": "class",
+    "name": "Wire",
+    "memberof": "src/Components/Wire.js",
+    "static": true,
+    "longname": "src/Components/Wire.js~Wire",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Components/Wire.js",
+    "importStyle": "Wire",
+    "description": "Wire class\nA zero voltage source",
+    "lineNumber": 10,
+    "interface": false,
+    "extends": [
+      "src/Components/VoltageSource.js~VoltageSource"
+    ]
+  },
+  {
+    "__docId__": 92,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Components/Wire.js~Wire",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Wire.js~Wire#constructor",
+    "access": null,
+    "description": "Creates an instance of Wire.",
+    "lineNumber": 15,
+    "params": []
+  },
+  {
+    "__docId__": 93,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/Components/Wire.js~Wire",
+    "static": false,
+    "longname": "src/Components/Wire.js~Wire#type",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 94,
+    "kind": "member",
+    "name": "dependant",
+    "memberof": "src/Components/Wire.js~Wire",
+    "static": false,
+    "longname": "src/Components/Wire.js~Wire#dependant",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"V\": *, \"I\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 95,
+    "kind": "member",
+    "name": "pins",
+    "memberof": "src/Components/Wire.js~Wire",
+    "static": false,
+    "longname": "src/Components/Wire.js~Wire#pins",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 96,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/Components/Wire.js~Wire",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Components/Wire.js~Wire#update",
+    "access": null,
+    "description": "Updates this component's dependant values and pins' voltage.\nCalled from CircuitUpdater update() method",
+    "lineNumber": 27,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 97,
+    "kind": "file",
+    "name": "src/ComponentType.js",
+    "content": "const ComponentType = {\r\n    TYPE_SOURCE: Symbol('Source'),\r\n    TYPE_RESISTOR: Symbol('Resistor'),\r\n    TYPE_CONNECTOR: Symbol('Connector'),\r\n    TYPE_CAPACITOR: Symbol('Capacitor'),\r\n    TYPE_INDUCTOR: Symbol('Inductor'),\r\n    TYPE_GROUND: Symbol('Ground')\r\n};\r\n\r\nexport {ComponentType as default};",
+    "static": true,
+    "longname": "src/ComponentType.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 98,
+    "kind": "variable",
+    "name": "ComponentType",
+    "memberof": "src/ComponentType.js",
+    "static": true,
+    "longname": "src/ComponentType.js~ComponentType",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/ComponentType.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"TYPE_SOURCE\": *, \"TYPE_RESISTOR\": *, \"TYPE_CONNECTOR\": *, \"TYPE_CAPACITOR\": *, \"TYPE_INDUCTOR\": *, \"TYPE_GROUND\": *}"
+      ]
+    }
+  },
+  {
+    "__docId__": 99,
+    "kind": "file",
+    "name": "src/entry.js",
+    "content": "",
+    "static": true,
+    "longname": "src/entry.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 100,
+    "kind": "file",
+    "name": "src/Matrix.js",
+    "content": "// @flow\r\n\r\n/**\r\n * Instead of inheriting from Array type, I wrapped an\r\n * array in Matrix class. Array inheritance is still not\r\n * supported properly in transpilation. The problem I had \r\n * is that the inherited Array will always be returned,\r\n * rather than the derived's instance.\r\n * See: https://babeljs.io/docs/usage/caveats/\r\n * \r\n */\r\nexport default class Matrix {\r\n\r\n    data: number[][];\r\n\r\n    /**\r\n     * Creates an instance of Matrix.\r\n     * @param {number} [row=undefined] \r\n     * @param {number} [col=undefined] \r\n     */\r\n    constructor(row: ?number = undefined, col: ?number = undefined) {\r\n\r\n        /**\r\n         * Representation of the matrix\r\n         * @type {number[][]}\r\n         */\r\n        this.data = [];\r\n\r\n        if(Number.isInteger(row)) {\r\n\r\n            this.data.length = row;\r\n\r\n            if(Number.isInteger(col) || col === undefined || col === null) {\r\n\r\n                let colArr = new Array(col || row).fill(0);\r\n\r\n                this.data.fill().forEach((r, i, a) => {\r\n                    a[i] = (colArr.slice());\r\n                });\r\n\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Adds a 0-filled row to the matrix\r\n     * @public\r\n     * @param {number} [amount]\r\n     */\r\n    addRow(amount: ?number): void {\r\n        // If this matrix has at least one row\r\n        if(this.data.length > 0) {\r\n            // Then we will base the length of the first row\r\n            // to create the new ones\r\n            let len = this.data[0].length,\r\n                arr = [];\r\n\r\n            arr.length = len;\r\n            arr.fill(0);\r\n\r\n            // If amount not set, then run once\r\n            for(let i = 0; i < (Number.isInteger(amount)? amount : 1); ++i) {\r\n                this.data.push(arr.slice()); // slice called to copy array\r\n            }\r\n        }\r\n        else {\r\n            for(let i = 0; i < (Number.isInteger(amount)? amount : 1); ++i) {\r\n                this.data.push([]);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Adds a 0-filled column to the matrix\r\n     * @public\r\n     * @param {number} [amount]\r\n     */\r\n    addCol(amount: ?number): void {\r\n        // If this matrix has at least one row\r\n        if(this.data.length > 0) {\r\n            let newCols = [0];\r\n            if(Number.isInteger(amount) && amount > 0) {\r\n                newCols.length = amount;\r\n                newCols.fill(0);\r\n            }\r\n            this.data.map(function(row) {\r\n                row.push(...newCols);\r\n            });\r\n        }\r\n        else {\r\n            this.data.push([]);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Converts row matrix to column matrix and returns it\r\n     * @static\r\n     * @param {number[]} row\r\n     * \r\n     * @returns {number[][]}\r\n     */\r\n    static rowToCol(row: number[]): number[][] {\r\n        return row.map(num => [num]);\r\n    }\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Matrix.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 101,
+    "kind": "class",
+    "name": "Matrix",
+    "memberof": "src/Matrix.js",
+    "static": true,
+    "longname": "src/Matrix.js~Matrix",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Matrix.js",
+    "importStyle": "Matrix",
+    "description": "Instead of inheriting from Array type, I wrapped an\narray in Matrix class. Array inheritance is still not\nsupported properly in transpilation. The problem I had \nis that the inherited Array will always be returned,\nrather than the derived's instance.\nSee: https://babeljs.io/docs/usage/caveats/",
+    "lineNumber": 12,
+    "interface": false
+  },
+  {
+    "__docId__": 102,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Matrix.js~Matrix",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Matrix.js~Matrix#constructor",
+    "access": null,
+    "description": "Creates an instance of Matrix.",
+    "lineNumber": 19,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "undefined",
+        "defaultRaw": "undefined",
+        "name": "row",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "undefined",
+        "defaultRaw": "undefined",
+        "name": "col",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 103,
+    "kind": "member",
+    "name": "data",
+    "memberof": "src/Matrix.js~Matrix",
+    "static": false,
+    "longname": "src/Matrix.js~Matrix#data",
+    "access": null,
+    "description": "Representation of the matrix",
+    "lineNumber": 25,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number[][]"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 104,
+    "kind": "method",
+    "name": "addRow",
+    "memberof": "src/Matrix.js~Matrix",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Matrix.js~Matrix#addRow",
+    "access": "public",
+    "description": "Adds a 0-filled row to the matrix",
+    "lineNumber": 47,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "amount",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 105,
+    "kind": "method",
+    "name": "addCol",
+    "memberof": "src/Matrix.js~Matrix",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Matrix.js~Matrix#addCol",
+    "access": "public",
+    "description": "Adds a 0-filled column to the matrix",
+    "lineNumber": 74,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "amount",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 106,
+    "kind": "method",
+    "name": "rowToCol",
+    "memberof": "src/Matrix.js~Matrix",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/Matrix.js~Matrix.rowToCol",
+    "access": null,
+    "description": "Converts row matrix to column matrix and returns it",
+    "lineNumber": 97,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number[][]}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "number[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "row",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number[][]"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 107,
+    "kind": "file",
+    "name": "src/SimulationConfig.js",
+    "content": "let config = {\r\n    timestep: 5e-6,\r\n    maxTime: 100e-3 \r\n};\r\n\r\nexport { config as default };",
+    "static": true,
+    "longname": "src/SimulationConfig.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 108,
+    "kind": "variable",
+    "name": "config",
+    "memberof": "src/SimulationConfig.js",
+    "static": true,
+    "longname": "src/SimulationConfig.js~config",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/SimulationConfig.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "{\"timestep\": number, \"maxTime\": number}"
+      ]
+    }
+  },
+  {
+    "__docId__": 109,
+    "kind": "file",
+    "name": "src/Simulator.js",
+    "content": "// @flow\r\nimport fs from 'fs';\r\n\r\nimport Board from './Board';\r\nimport Traverser from './Traverser';\r\nimport Solver from './Solver';\r\nimport CircuitUpdater from './CircuitUpdater';\r\nimport SimConfig from './SimulationConfig';\r\nimport { VoltageSource, CurrentSource, Wire, Inductor, Capacitor, Ground, Resistor } from './Components';\r\n\r\nimport RLC_circuit from '../circuits/RLC';\r\n\r\nlet maxIterations = SimConfig.maxTime / SimConfig.timestep,\r\n    time = 0,\r\n    fileData = '',\r\n    solution = [];\r\n\r\n// Save references for later use\r\nlet B = RLC_circuit.board,\r\n    C = RLC_circuit.components.C;\r\n\r\n// Simulation starts here\r\nlet nodes = Traverser.assignComponentNodes(B.pins),\r\n    solver = new Solver(SimConfig);\r\n\r\nwhile(maxIterations--) {\r\n    solution = solver.solve(B.components, nodes);\r\n\r\n    // Store all the data first, then execute only one file write later\r\n    fileData += `${time}, ${C.dependant.I}, ${C.dependant.V}\\n`;\r\n\r\n    CircuitUpdater.update(CircuitUpdater.getUpdateObject(nodes, solution));\r\n    \r\n    time += SimConfig.timestep;\r\n}\r\n\r\nfs.writeFile('RLC.csv', fileData);",
+    "static": true,
+    "longname": "src/Simulator.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 110,
+    "kind": "variable",
+    "name": "maxIterations",
+    "memberof": "src/Simulator.js",
+    "static": true,
+    "longname": "src/Simulator.js~maxIterations",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/Simulator.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 111,
+    "kind": "variable",
+    "name": "B",
+    "memberof": "src/Simulator.js",
+    "static": true,
+    "longname": "src/Simulator.js~B",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/Simulator.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 112,
+    "kind": "variable",
+    "name": "nodes",
+    "memberof": "src/Simulator.js",
+    "static": true,
+    "longname": "src/Simulator.js~nodes",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/Simulator.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 22,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 113,
+    "kind": "file",
+    "name": "src/Solver.js",
+    "content": "// @flow\r\n\r\nimport Matrix from './Matrix.js';\r\nimport ComponentType from './ComponentType.js';\r\nimport Numeric from 'numericjs';\r\n\r\n/**\r\n * Solver class of the simulator.\r\n * Creates the matrices and initiates the stamping, and solve using NumericJS' LUsolve method.\r\n */\r\nexport default class Solver {\r\n\r\n    simConfig: Object;\r\n    LU_Y: Object;\r\n\r\n    constructor(simConfig: Object) {\r\n        /**\r\n         * Key-value object that holds the config for this simulation\r\n         * @type {Object}\r\n         */\r\n        this.simConfig = simConfig;\r\n\r\n        /**\r\n         * Stores the LU decomposed Y matrix result object from Numeric.LU()\r\n         * @type {Object}\r\n         */\r\n        this.LU_Y = undefined;\r\n    }\r\n\r\n    /**\r\n     * Gets the number of voltage sources\r\n     * @param {BoardComponents} components \r\n     * \r\n     * @returns {number}\r\n     */\r\n    getNumVSource(components: BoardComponents): number {\r\n        let vSourceCount = 0;\r\n        for(let id in components) {\r\n            if('vSourceNum' in components[id]) {\r\n                ++vSourceCount;\r\n            }\r\n        }\r\n        return vSourceCount;\r\n    }\r\n\r\n    /**\r\n     * Stamps Y and J matrices with the values of the components\r\n     * @param {BoardComponents} components \r\n     * @param {Matrix} Y \r\n     * @param {Matrix} J \r\n     */\r\n    stampMatrices(components: BoardComponents, Y: Matrix, J: Matrix): void {\r\n\r\n        let vSourceNum = 1;\r\n        for(let id in components) {\r\n            let component = components[id];\r\n            if(component.vSourceNum !== undefined) {\r\n                component.vSourceNum = vSourceNum++;\r\n            }\r\n\r\n            if(components[id].type !== ComponentType.TYPE_GROUND) {\r\n                components[id].stamp(Y, J, this.simConfig);\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * In MNA, we have three matrices Yx = J.\r\n     * This method solves the circuit by calculating the values for\r\n     * matrix x and returns it.\r\n     * @param {BoardComponents} components \r\n     * @param {Pin[][]} nodes\r\n     * \r\n     * @returns {number[]} solution\r\n     */\r\n    solve(components: BoardComponents, nodes: Pin[][]): number[] {\r\n        let numNode = nodes.length,\r\n            numVSource = this.getNumVSource(components);\r\n\r\n        let Y = new Matrix(numNode + numVSource),\r\n            J = new Matrix(numNode + numVSource, 1);\r\n\r\n        this.stampMatrices(components, Y, J);\r\n\r\n        if(this.LU_Y == undefined) {\r\n\r\n            // Remove the 0-th row and column because we don't need Ground nodes\r\n            Y.data.splice(0,1);\r\n            for(let row in Y.data) {\r\n                Y.data[row] = Y.data[row].splice(1, Y.data[row].length);\r\n            }\r\n            this.LU_Y = Numeric.LU(Y.data);\r\n        }\r\n        // Same as above for matrix J\r\n        J.data.splice(0,1);\r\n\r\n        // Start with 0, which is the voltage of the 0th/ground node\r\n        return [0].concat(...Numeric.LUsolve(this.LU_Y, J.data));\r\n    }\r\n}\r\n\r\n",
+    "static": true,
+    "longname": "src/Solver.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 114,
+    "kind": "class",
+    "name": "Solver",
+    "memberof": "src/Solver.js",
+    "static": true,
+    "longname": "src/Solver.js~Solver",
+    "access": null,
+    "export": true,
+    "importPath": "circuit-simulator/src/Solver.js",
+    "importStyle": "Solver",
+    "description": "Solver class of the simulator.\nCreates the matrices and initiates the stamping, and solve using NumericJS' LUsolve method.",
+    "lineNumber": 9,
+    "interface": false
+  },
+  {
+    "__docId__": 115,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Solver.js~Solver",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Solver.js~Solver#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "params": [
+      {
+        "name": "simConfig",
+        "types": [
+          "*"
+        ]
+      }
+    ]
+  },
+  {
+    "__docId__": 116,
+    "kind": "member",
+    "name": "simConfig",
+    "memberof": "src/Solver.js~Solver",
+    "static": false,
+    "longname": "src/Solver.js~Solver#simConfig",
+    "access": null,
+    "description": "Key-value object that holds the config for this simulation",
+    "lineNumber": 16,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 117,
+    "kind": "member",
+    "name": "LU_Y",
+    "memberof": "src/Solver.js~Solver",
+    "static": false,
+    "longname": "src/Solver.js~Solver#LU_Y",
+    "access": null,
+    "description": "Stores the LU decomposed Y matrix result object from Numeric.LU()",
+    "lineNumber": 22,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Object"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 118,
+    "kind": "method",
+    "name": "getNumVSource",
+    "memberof": "src/Solver.js~Solver",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Solver.js~Solver#getNumVSource",
+    "access": null,
+    "description": "Gets the number of voltage sources",
+    "lineNumber": 31,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardComponents"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "components",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 119,
+    "kind": "method",
+    "name": "stampMatrices",
+    "memberof": "src/Solver.js~Solver",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Solver.js~Solver#stampMatrices",
+    "access": null,
+    "description": "Stamps Y and J matrices with the values of the components",
+    "lineNumber": 47,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardComponents"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "components",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "Y",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Matrix"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "J",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 120,
+    "kind": "method",
+    "name": "solve",
+    "memberof": "src/Solver.js~Solver",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Solver.js~Solver#solve",
+    "access": null,
+    "description": "In MNA, we have three matrices Yx = J.\nThis method solves the circuit by calculating the values for\nmatrix x and returns it.",
+    "lineNumber": 71,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number[]} solution"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardComponents"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "components",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Pin[][]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodes",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number[]"
+      ],
+      "spread": false,
+      "description": "solution"
+    }
+  },
+  {
+    "__docId__": 121,
+    "kind": "member",
+    "name": "LU_Y",
+    "memberof": "src/Solver.js~Solver",
+    "static": false,
+    "longname": "src/Solver.js~Solver#LU_Y",
+    "access": null,
+    "description": null,
+    "lineNumber": 87,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 122,
+    "kind": "file",
+    "name": "src/Traverser.js",
+    "content": "// @flow\r\n\r\nimport ComponentType from './ComponentType.js';\r\n\r\n/**\r\n * Singleton class.\r\n * Traverses components on the circuit board using BFS to assign Node numbers to each\r\n * component so that MNA (Modified Nodal Analysis) can later be applied onto the circuit.\r\n */\r\nclass Traverser {\r\n    \r\n    /**\r\n     * Empty constructor\r\n     */\r\n    constructor() {}\r\n\r\n    /**\r\n     * Resets the visited flag of all components' pins to FALSE.\r\n     * @private\r\n     * @param {BoardPins} pins \r\n     */\r\n    resetVisited(pins: BoardPins): void {\r\n        for(let position in pins) {\r\n            for(let pin in pins[position]) {\r\n                pins[position][pin].visited = false;\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Assigns the pin to a node by placing it on the nodeIndex of the nodes array\r\n     * i.e. nodes array get mutated.\r\n     * @private\r\n     * @param {Pin} pin \r\n     * @param {Pin[][]} nodes \r\n     * @param {number} nodeIndex \r\n     */\r\n    assignNode(pin: Pin, nodes: Pin[][], nodeIndex: number): void {\r\n        nodes[nodeIndex] = (nodes[nodeIndex] || []).concat(pin);\r\n    }\r\n\r\n    /**\r\n     * Changes the visited flag of a pin to TRUE.\r\n     * @private\r\n     * @param {Pin} pin \r\n     */\r\n    flagVisited(pin: Pin): void {\r\n        pin.visited = true;\r\n    }\r\n\r\n    /**\r\n     * We are using BFS Graph traversal.\r\n     * This places unvisited pin(s) of a component into a queue to come back later.\r\n     * @private\r\n     * @param {Pin} pin \r\n     * @param {Pin[]} queue \r\n     */\r\n    enqueue(pin: Pin, queue: Pin[]): void {\r\n        if(!pin.visited && pin.parent.type !== ComponentType.TYPE_GROUND) {\r\n            queue.push(...pin.parent.otherPins(pin.index));\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Returns 'prearrangedNodes', a 2D array of Pins.\r\n     * The first index denotes the n-th Node that we will be using for MNA.\r\n     * The second index denotes the Pin in that node. We store Pin rather \r\n     * than Component, because Pin has 'parent' and 'index' field: parent is the\r\n     * Component that 'owns' it, and 'index' is the n-th Pin of the parent.\r\n     * \r\n     * nodes[0] array is expected to be empty, because we will later move all\r\n     * nodes with Ground to nodes[0] and clear up empty nodes.\r\n     * @private\r\n     * @param {BoardPins} pins\r\n     * \r\n     * @returns {Pin[][]} prearrangedNodes\r\n     */\r\n    getPrearrangedNodes(pins: BoardPins): Pin[][] {\r\n        let prearrangedNodes = [[]],\r\n            nodeIndex = 1,\r\n            queue = [];\r\n\r\n        this.resetVisited(pins);\r\n\r\n        // Start from any source component's pin\r\n        let currentPins: Pin[],\r\n            startPin: Pin,\r\n            strPos: string = \"\";\r\n\r\n        // Search for that souce component's pin and its position on the board\r\n        for(let position in pins) {\r\n            currentPins = pins[position];\r\n            for(let pinInd in currentPins) {\r\n                if(currentPins[pinInd].parent.type === ComponentType.TYPE_SOURCE) {\r\n                    strPos = position;\r\n                    startPin = currentPins[pinInd];\r\n                    break;\r\n                }\r\n            }\r\n            if(startPin) break;\r\n        }\r\n        \r\n        // Recurse through the connected components to construct the prearrangedNodes array\r\n        let self = this;\r\n        (function BFS(position: string){\r\n\r\n            // Get array of pins that are in this position\r\n            pins[position].forEach((pin) => {\r\n                if(!pin.visited) {\r\n                    self.AEF(pin, prearrangedNodes, queue, nodeIndex);\r\n                }\r\n            });\r\n            ++nodeIndex;\r\n\r\n            // Look for the next position to recurse on\r\n            let nextPin: Pin;\r\n            do {\r\n                nextPin = queue.shift();\r\n            } while(!!nextPin && nextPin.visited);\r\n\r\n            if(nextPin) {\r\n                BFS(nextPin.position.toString());\r\n            }\r\n            // End of BFS\r\n        }(strPos));\r\n\r\n        return prearrangedNodes;\r\n    }\r\n    \r\n    /**\r\n     * AEF stands for Assign-Enqueue-Flag, used in the recursive BFS in\r\n     * getPrearrangedNodes() method.\r\n     * @private\r\n     * @param {Pin} pin \r\n     * @param {Pin[][]} nodes \r\n     * @param {Pin[]} queue\r\n     * @param {number} nodeIndex \r\n     */\r\n    AEF(pin: Pin, nodes: Pin[][], queue: Pin[], nodeIndex: number): void\r\n    {\r\n        this.assignNode(pin, nodes, nodeIndex);\r\n        this.enqueue(pin, queue);\r\n        this.flagVisited(pin);\r\n    }\r\n\r\n    /**\r\n     * Supposed to run with the nodes from getPrearrangedNodes()\r\n     * This method moves all nodes that have Ground component to nodes[0]\r\n     * and removes the empty nodes.\r\n     * @private\r\n     * @param {Pin[][]} nodes\r\n     * \r\n     * @return {Pin[][]} nodes\r\n     */\r\n    finaliseNodes(nodes: Pin[][]): Pin[][] {\r\n        let finalNodes = nodes.slice();\r\n\r\n        // Find all nodes with Ground component and move that node to node 0\r\n        finalNodes.forEach((node, index) => {\r\n            let hasGround = node.some(pin => {\r\n                return pin.parent.type === ComponentType.TYPE_GROUND;\r\n            });\r\n            if(hasGround) {\r\n                finalNodes[0] = [].concat(...finalNodes[index].splice(0, finalNodes[index].length));\r\n            }\r\n        });\r\n\r\n        // Then we clear out the empty nodes\r\n        let len = finalNodes.length;\r\n        for(let i = 1; i < len;) {\r\n            if(finalNodes[i].length === 0) {\r\n                finalNodes.splice(i,1);\r\n                --len;\r\n            }\r\n            else {\r\n                ++i;\r\n            }\r\n        }\r\n\r\n        return finalNodes;\r\n    }\r\n\r\n    /**\r\n     * Returns the final nodes array, ready to be assigned to the components.\r\n     * @public\r\n     * @param {BoardPins} pins \r\n     * \r\n     * @return {Pin[][]} nodes\r\n     */\r\n    getNodes(pins: BoardPins): Pin[][] {\r\n        let prearrangedNodes = this.getPrearrangedNodes(pins);\r\n\r\n        return this.finaliseNodes(prearrangedNodes);\r\n    }\r\n\r\n    /**\r\n     * This method assigns the FINAL node number into the Components' nodes field.\r\n     * @public\r\n     * @param {BoardPins} pins\r\n     * \r\n     * @returns {Pin[][]} nodes\r\n     */\r\n    assignComponentNodes(pins: BoardPins): Pin[][] {\r\n        let nodes = this.getNodes(pins);\r\n        nodes.forEach((node, nodeNum) => {\r\n            node.forEach(pin => {\r\n                pin.parent.nodes[pin.index] = nodeNum;\r\n            });\r\n        });\r\n        return nodes.slice();\r\n    }\r\n}\r\n\r\nconst Singleton = new Traverser();\r\n\r\nexport { Singleton as default };",
+    "static": true,
+    "longname": "src/Traverser.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 123,
+    "kind": "class",
+    "name": "Traverser",
+    "memberof": "src/Traverser.js",
+    "static": true,
+    "longname": "src/Traverser.js~Traverser",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/Traverser.js",
+    "importStyle": null,
+    "description": "Singleton class.\nTraverses components on the circuit board using BFS to assign Node numbers to each\ncomponent so that MNA (Modified Nodal Analysis) can later be applied onto the circuit.",
+    "lineNumber": 8,
+    "interface": false
+  },
+  {
+    "__docId__": 124,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#constructor",
+    "access": null,
+    "description": "Empty constructor",
+    "lineNumber": 13,
+    "params": []
+  },
+  {
+    "__docId__": 125,
+    "kind": "method",
+    "name": "resetVisited",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#resetVisited",
+    "access": "private",
+    "description": "Resets the visited flag of all components' pins to FALSE.",
+    "lineNumber": 20,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardPins"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pins",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 126,
+    "kind": "method",
+    "name": "assignNode",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#assignNode",
+    "access": "private",
+    "description": "Assigns the pin to a node by placing it on the nodeIndex of the nodes array\ni.e. nodes array get mutated.",
+    "lineNumber": 36,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Pin"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pin",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Pin[][]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodes",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodeIndex",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 127,
+    "kind": "method",
+    "name": "flagVisited",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#flagVisited",
+    "access": "private",
+    "description": "Changes the visited flag of a pin to TRUE.",
+    "lineNumber": 45,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Pin"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pin",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 128,
+    "kind": "method",
+    "name": "enqueue",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#enqueue",
+    "access": "private",
+    "description": "We are using BFS Graph traversal.\nThis places unvisited pin(s) of a component into a queue to come back later.",
+    "lineNumber": 56,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Pin"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pin",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Pin[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queue",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 129,
+    "kind": "method",
+    "name": "getPrearrangedNodes",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#getPrearrangedNodes",
+    "access": "private",
+    "description": "Returns 'prearrangedNodes', a 2D array of Pins.\nThe first index denotes the n-th Node that we will be using for MNA.\nThe second index denotes the Pin in that node. We store Pin rather \nthan Component, because Pin has 'parent' and 'index' field: parent is the\nComponent that 'owns' it, and 'index' is the n-th Pin of the parent.\n\nnodes[0] array is expected to be empty, because we will later move all\nnodes with Ground to nodes[0] and clear up empty nodes.",
+    "lineNumber": 76,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Pin[][]} prearrangedNodes"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardPins"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pins",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Pin[][]"
+      ],
+      "spread": false,
+      "description": "prearrangedNodes"
+    }
+  },
+  {
+    "__docId__": 130,
+    "kind": "method",
+    "name": "AEF",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#AEF",
+    "access": "private",
+    "description": "AEF stands for Assign-Enqueue-Flag, used in the recursive BFS in\ngetPrearrangedNodes() method.",
+    "lineNumber": 137,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Pin"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pin",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Pin[][]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodes",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Pin[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queue",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodeIndex",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "__docId__": 131,
+    "kind": "method",
+    "name": "finaliseNodes",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#finaliseNodes",
+    "access": "private",
+    "description": "Supposed to run with the nodes from getPrearrangedNodes()\nThis method moves all nodes that have Ground component to nodes[0]\nand removes the empty nodes.",
+    "lineNumber": 152,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Pin[][]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "nodes",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Pin[][]"
+      ],
+      "spread": false,
+      "description": "nodes"
+    }
+  },
+  {
+    "__docId__": 132,
+    "kind": "method",
+    "name": "getNodes",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#getNodes",
+    "access": "public",
+    "description": "Returns the final nodes array, ready to be assigned to the components.",
+    "lineNumber": 186,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardPins"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pins",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Pin[][]"
+      ],
+      "spread": false,
+      "description": "nodes"
+    }
+  },
+  {
+    "__docId__": 133,
+    "kind": "method",
+    "name": "assignComponentNodes",
+    "memberof": "src/Traverser.js~Traverser",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/Traverser.js~Traverser#assignComponentNodes",
+    "access": "public",
+    "description": "This method assigns the FINAL node number into the Components' nodes field.",
+    "lineNumber": 199,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{Pin[][]} nodes"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "BoardPins"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "pins",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Pin[][]"
+      ],
+      "spread": false,
+      "description": "nodes"
+    }
+  },
+  {
+    "__docId__": 134,
+    "kind": "variable",
+    "name": "Singleton",
+    "memberof": "src/Traverser.js",
+    "static": true,
+    "longname": "src/Traverser.js~Singleton",
+    "access": null,
+    "export": false,
+    "importPath": "circuit-simulator/src/Traverser.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 210,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "Traverser"
+      ]
+    }
+  },
+  {
+    "__docId__": 136,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 137,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 138,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 139,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 140,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 141,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 142,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 143,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 144,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 145,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 146,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 147,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 148,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 149,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 150,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 151,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 152,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 153,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 154,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 155,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 156,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 157,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 158,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 159,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 160,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 161,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 162,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 163,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 164,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 165,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 166,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 167,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 168,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 169,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 170,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 171,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 172,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 173,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 174,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 175,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 176,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 177,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 178,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 179,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 180,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 181,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 182,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 184,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 185,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 186,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 187,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 188,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 189,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 190,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 191,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  }
+]

@@ -5,11 +5,13 @@ import ComponentType from './ComponentType.js';
 import Numeric from 'numericjs';
 
 /**
- * Solves the circuit
+ * Solver class of the simulator.
+ * Creates the matrices and initiates the stamping, and solve using NumericJS' LUsolve method.
  */
 export default class Solver {
 
     simConfig: Object;
+    LU_Y: Object;
 
     constructor(simConfig: Object) {
         /**
@@ -17,24 +19,28 @@ export default class Solver {
          * @type {Object}
          */
         this.simConfig = simConfig;
+
+        /**
+         * Stores the LU decomposed Y matrix result object from Numeric.LU()
+         * @type {Object}
+         */
+        this.LU_Y = undefined;
     }
 
     /**
      * Gets the number of voltage sources
-     * @param {Pin[][]} nodes 
+     * @param {BoardComponents} components 
      * 
      * @returns {number}
      */
-    getNumVSource(nodes: Pin[][]): number {
-        let vSourceCount = {};
-        nodes.forEach(node => {
-            node.forEach(pin => {
-                if(pin.parent.vSourceNum !== undefined) {
-                    vSourceCount[pin.parent.id] = 0;
-                }
-            })
-        });
-        return Object.keys(vSourceCount).length;
+    getNumVSource(components: BoardComponents): number {
+        let vSourceCount = 0;
+        for(let id in components) {
+            if('vSourceNum' in components[id]) {
+                ++vSourceCount;
+            }
+        }
+        return vSourceCount;
     }
 
     /**
@@ -69,23 +75,27 @@ export default class Solver {
      */
     solve(components: BoardComponents, nodes: Pin[][]): number[] {
         let numNode = nodes.length,
-            numVSource = this.getNumVSource(nodes);
+            numVSource = this.getNumVSource(components);
 
         let Y = new Matrix(numNode + numVSource),
             J = new Matrix(numNode + numVSource, 1);
 
         this.stampMatrices(components, Y, J);
 
-        // Remove the 0-th row and column because we don't need Ground nodes
-        Y.data.splice(0,1);
-        for(let row in Y.data) {
-            Y.data[row] = Y.data[row].splice(1, Y.data[row].length);
+        if(this.LU_Y == undefined) {
+
+            // Remove the 0-th row and column because we don't need Ground nodes
+            Y.data.splice(0,1);
+            for(let row in Y.data) {
+                Y.data[row] = Y.data[row].splice(1, Y.data[row].length);
+            }
+            this.LU_Y = Numeric.LU(Y.data);
         }
         // Same as above for matrix J
         J.data.splice(0,1);
 
         // Start with 0, which is the voltage of the 0th/ground node
-        return [0].concat(...Numeric.solve(Y.data, J.data));
+        return [0].concat(...Numeric.LUsolve(this.LU_Y, J.data));
     }
 }
 

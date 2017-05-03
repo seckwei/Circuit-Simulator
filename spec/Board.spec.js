@@ -22,7 +22,12 @@ describe('Board', () => {
             expect(B.pins['10,0']).toEqual([V.pins[1]]);
         });
 
-        it('should update the position of the pins', () => {
+        it('should add the component pins to board.components', () => {
+            B.add(V, [[0,0], [10,0]]);
+            expect(V.id in B.components).toBe(true);
+        });
+
+        it('should update the position of the pins on the component', () => {
             B.add(V, [[0,0], [10,0]]);
             expect(V.pins[0].position).toEqual([0,0]);
             expect(V.pins[1].position).toEqual([10,0]);
@@ -43,6 +48,8 @@ describe('Board', () => {
 
             expect(B.pins['0,0']).toEqual([]);
             expect(B.pins["10,0"]).toEqual([]);
+
+            expect(V.id in B.components).toBe(false);
 
             expect(V.pins[0].position).toBe(null);
             expect(V.pins[1].position).toBe(null);

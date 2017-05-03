@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/Traverser.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/seckwei/Circuit-Simulator" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Board.js~Board.html">Board</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/CircuitUpdater.js~CircuitUpdater.html">CircuitUpdater</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Matrix.js~Matrix.html">Matrix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Solver.js~Solver.html">Solver</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Traverser.js~Traverser.html">Traverser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Components</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Capacitor.js~Capacitor.html">Capacitor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Component.js~Component.html">Component</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/CurrentSource.js~CurrentSource.html">CurrentSource</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Ground.js~Ground.html">Ground</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Inductor.js~Inductor.html">Inductor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Pin.js~Pin.html">Pin</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Resistor.js~Resistor.html">Resistor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/VoltageSource.js~VoltageSource.html">VoltageSource</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Wire.js~Wire.html">Wire</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Traverser.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+
+import ComponentType from &apos;./ComponentType.js&apos;;
+
+/**
+ * Singleton class.
+ * Traverses components on the circuit board using BFS to assign Node numbers to each
+ * component so that MNA (Modified Nodal Analysis) can later be applied onto the circuit.
+ */
+class Traverser {
+    
+    /**
+     * Empty constructor
+     */
+    constructor() {}
+
+    /**
+     * Resets the visited flag of all components&apos; pins to FALSE.
+     * @private
+     * @param {BoardPins} pins 
+     */
+    resetVisited(pins: BoardPins): void {
+        for(let position in pins) {
+            for(let pin in pins[position]) {
+                pins[position][pin].visited = false;
+            }
+        }
+    }
+
+    /**
+     * Assigns the pin to a node by placing it on the nodeIndex of the nodes array
+     * i.e. nodes array get mutated.
+     * @private
+     * @param {Pin} pin 
+     * @param {Pin[][]} nodes 
+     * @param {number} nodeIndex 
+     */
+    assignNode(pin: Pin, nodes: Pin[][], nodeIndex: number): void {
+        nodes[nodeIndex] = (nodes[nodeIndex] || []).concat(pin);
+    }
+
+    /**
+     * Changes the visited flag of a pin to TRUE.
+     * @private
+     * @param {Pin} pin 
+     */
+    flagVisited(pin: Pin): void {
+        pin.visited = true;
+    }
+
+    /**
+     * We are using BFS Graph traversal.
+     * This places unvisited pin(s) of a component into a queue to come back later.
+     * @private
+     * @param {Pin} pin 
+     * @param {Pin[]} queue 
+     */
+    enqueue(pin: Pin, queue: Pin[]): void {
+        if(!pin.visited &amp;&amp; pin.parent.type !== ComponentType.TYPE_GROUND) {
+            queue.push(...pin.parent.otherPins(pin.index));
+        }
+    }
+
+    /**
+     * Returns &apos;prearrangedNodes&apos;, a 2D array of Pins.
+     * The first index denotes the n-th Node that we will be using for MNA.
+     * The second index denotes the Pin in that node. We store Pin rather 
+     * than Component, because Pin has &apos;parent&apos; and &apos;index&apos; field: parent is the
+     * Component that &apos;owns&apos; it, and &apos;index&apos; is the n-th Pin of the parent.
+     * 
+     * nodes[0] array is expected to be empty, because we will later move all
+     * nodes with Ground to nodes[0] and clear up empty nodes.
+     * @private
+     * @param {BoardPins} pins
+     * 
+     * @returns {Pin[][]} prearrangedNodes
+     */
+    getPrearrangedNodes(pins: BoardPins): Pin[][] {
+        let prearrangedNodes = [[]],
+            nodeIndex = 1,
+            queue = [];
+
+        this.resetVisited(pins);
+
+        // Start from any source component&apos;s pin
+        let currentPins: Pin[],
+            startPin: Pin,
+            strPos: string = &quot;&quot;;
+
+        // Search for that souce component&apos;s pin and its position on the board
+        for(let position in pins) {
+            currentPins = pins[position];
+            for(let pinInd in currentPins) {
+                if(currentPins[pinInd].parent.type === ComponentType.TYPE_SOURCE) {
+                    strPos = position;
+                    startPin = currentPins[pinInd];
+                    break;
+                }
+            }
+            if(startPin) break;
+        }
+        
+        // Recurse through the connected components to construct the prearrangedNodes array
+        let self = this;
+        (function BFS(position: string){
+
+            // Get array of pins that are in this position
+            pins[position].forEach((pin) =&gt; {
+                if(!pin.visited) {
+                    self.AEF(pin, prearrangedNodes, queue, nodeIndex);
+                }
+            });
+            ++nodeIndex;
+
+            // Look for the next position to recurse on
+            let nextPin: Pin;
+            do {
+                nextPin = queue.shift();
+            } while(!!nextPin &amp;&amp; nextPin.visited);
+
+            if(nextPin) {
+                BFS(nextPin.position.toString());
+            }
+            // End of BFS
+        }(strPos));
+
+        return prearrangedNodes;
+    }
+    
+    /**
+     * AEF stands for Assign-Enqueue-Flag, used in the recursive BFS in
+     * getPrearrangedNodes() method.
+     * @private
+     * @param {Pin} pin 
+     * @param {Pin[][]} nodes 
+     * @param {Pin[]} queue
+     * @param {number} nodeIndex 
+     */
+    AEF(pin: Pin, nodes: Pin[][], queue: Pin[], nodeIndex: number): void
+    {
+        this.assignNode(pin, nodes, nodeIndex);
+        this.enqueue(pin, queue);
+        this.flagVisited(pin);
+    }
+
+    /**
+     * Supposed to run with the nodes from getPrearrangedNodes()
+     * This method moves all nodes that have Ground component to nodes[0]
+     * and removes the empty nodes.
+     * @private
+     * @param {Pin[][]} nodes
+     * 
+     * @return {Pin[][]} nodes
+     */
+    finaliseNodes(nodes: Pin[][]): Pin[][] {
+        let finalNodes = nodes.slice();
+
+        // Find all nodes with Ground component and move that node to node 0
+        finalNodes.forEach((node, index) =&gt; {
+            let hasGround = node.some(pin =&gt; {
+                return pin.parent.type === ComponentType.TYPE_GROUND;
+            });
+            if(hasGround) {
+                finalNodes[0] = [].concat(...finalNodes[index].splice(0, finalNodes[index].length));
+            }
+        });
+
+        // Then we clear out the empty nodes
+        let len = finalNodes.length;
+        for(let i = 1; i &lt; len;) {
+            if(finalNodes[i].length === 0) {
+                finalNodes.splice(i,1);
+                --len;
+            }
+            else {
+                ++i;
+            }
+        }
+
+        return finalNodes;
+    }
+
+    /**
+     * Returns the final nodes array, ready to be assigned to the components.
+     * @public
+     * @param {BoardPins} pins 
+     * 
+     * @return {Pin[][]} nodes
+     */
+    getNodes(pins: BoardPins): Pin[][] {
+        let prearrangedNodes = this.getPrearrangedNodes(pins);
+
+        return this.finaliseNodes(prearrangedNodes);
+    }
+
+    /**
+     * This method assigns the FINAL node number into the Components&apos; nodes field.
+     * @public
+     * @param {BoardPins} pins
+     * 
+     * @returns {Pin[][]} nodes
+     */
+    assignComponentNodes(pins: BoardPins): Pin[][] {
+        let nodes = this.getNodes(pins);
+        nodes.forEach((node, nodeNum) =&gt; {
+            node.forEach(pin =&gt; {
+                pin.parent.nodes[pin.index] = nodeNum;
+            });
+        });
+        return nodes.slice();
+    }
+}
+
+const Singleton = new Traverser();
+
+export { Singleton as default };</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

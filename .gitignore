@@ -37,9 +37,10 @@ jspm_packages
 .node_repl_history
 dist/
 
-# Doc files
-doc/
-!doc/esdoc.json
-
 # Autohotkeys
 *.ahk
+
+# Misc
+*.xlsx
+*.csv
+.vscode/

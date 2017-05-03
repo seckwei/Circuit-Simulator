@@ -6,6 +6,7 @@ import ComponentType from '../ComponentType.js';
 
 /**
  * Utilising Norton Companion Model and Trapezoidal Approximation
+ * for Transient Analysis
  */
 export default class Capacitor extends Component {
 

@@ -37,7 +37,7 @@ export default class Component {
         ++Component.idCount;
 
         /**
-         * User defined label - currently not editable
+         * User defined label - not used at the moment
          * @type {string}
          */
         this.label = 'unlabelled';
@@ -67,21 +67,10 @@ export default class Component {
         this.pins = [];
 
         /**
-         * The nodes this component's pins are connected
+         * The nodes this component's pins are connected to
          * @type {number[]}
          */
         this.nodes = [];
-    }
-
-    /** 
-     * Sets the position of this components pins.
-     * First item for pin0, Second for pin1, ... and so on.
-     * @param {number[][]} positions
-     */
-    place(positions: number[][]): void {
-        this.pins.forEach((pin, index) => {
-            pin.position = (positions[index]).slice(); // slice to make a copy
-        });
     }
 
     /**

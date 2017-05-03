@@ -29,7 +29,7 @@ export default class Pin {
 		this.index = index;
         /**
          * Position on the board
-         * @type {number[][] | null} [position=false]
+         * @type {number[][] | null} [position=null]
          */
         this.position = null;
         /**

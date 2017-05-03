@@ -22,11 +22,11 @@ export default class Resistor extends Component {
     }
 
     /**
-     * Stamps the admittance matrix - matrixY
+     * Stamps the just conductance matrix - matrixY
      * @param {Matrix} matrixY 
      */
     stamp(matrixY: Matrix):void {
-        const G = 1 / this.controlled.R, //conductance
+        const G = 1 / this.controlled.R, // conductance = 1/resistance
             [from, to] = this.nodes;
 
         matrixY.data[to][to] += G;

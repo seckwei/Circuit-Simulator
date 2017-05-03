@@ -1,0 +1,21 @@
+{
+    "source": "./src",
+    "includes": [".+\\.js$"],
+    "excludes": ["(^|\\/|\\\\)_"],
+    "destination": "./doc",
+    "plugins": [{"name" : "./node_modules/esdoc-flow-plugin"}],
+    "access" : ["public", "protected"],
+    "unexportIdentifier": true,
+    "undocumentIdentifier": false,
+    "includeSource": true,
+    "experimentalProposal": {
+        "classProperties": true,
+        "objectRestSpread": true,
+        "decorators": true,
+        "doExpressions": true,
+        "functionBind": true,
+        "asyncGenerators": true,
+        "exportExtensions": true,
+        "dynamicImport": true
+    }
+}

@@ -5,7 +5,7 @@ const B = new Board();
 
 const components = {
     V : new VoltageSource(5),
-    L : new Inductor(10),
+    L : new Inductor(1),
     R : new Resistor(10),
     C : new Capacitor(1e-6),
     GND : new Ground()

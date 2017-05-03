@@ -8,10 +8,9 @@ describe('Solver', () => {
     
     const solver = new Solver(SimConfig);
 
-    describe('getNumVSource(nodes)', () => {
+    describe('getNumVSource(Board.components)', () => {
         it('should return the number of voltage sources (which includes wires)', () => {
-            let nodes = Traverser.assignComponentNodes(Object.assign({}, WORKING_CIRCUIT.pins));
-            expect(solver.getNumVSource(nodes)).toBe(2);
+            expect(solver.getNumVSource(WORKING_CIRCUIT.components)).toBe(2);
         });
     });
 
