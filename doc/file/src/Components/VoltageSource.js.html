@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/Components/VoltageSource.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/seckwei/Circuit-Simulator" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Board.js~Board.html">Board</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/CircuitUpdater.js~CircuitUpdater.html">CircuitUpdater</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Matrix.js~Matrix.html">Matrix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Solver.js~Solver.html">Solver</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Traverser.js~Traverser.html">Traverser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Components</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Capacitor.js~Capacitor.html">Capacitor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Component.js~Component.html">Component</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/CurrentSource.js~CurrentSource.html">CurrentSource</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Ground.js~Ground.html">Ground</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Inductor.js~Inductor.html">Inductor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Pin.js~Pin.html">Pin</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Resistor.js~Resistor.html">Resistor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/VoltageSource.js~VoltageSource.html">VoltageSource</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Wire.js~Wire.html">Wire</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Components/VoltageSource.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+
+import Component from &apos;./Component.js&apos;;
+import Pin from &apos;./Pin.js&apos;;
+import ComponentType from &apos;../ComponentType.js&apos;;
+
+/**
+ * VoltageSource class
+ */
+export default class VoltageSource extends Component {
+
+    vSourceNum: number;
+
+    /**
+     * Creates an instance of VoltageSource.
+     * @param {number} [initVoltage=5]
+     * @param {string} [symbol=V]
+     */
+    constructor(initVoltage: number = 5, symbol: string = &apos;V&apos;) {
+        super(symbol);
+        this.type = ComponentType.TYPE_SOURCE;
+        this.controlled = { V: initVoltage };
+        this.dependant = { I: undefined };
+        this.pins = [new Pin(this, 0), new Pin(this, 1)];
+
+        /**
+         * Denotes the n-th voltage source. This is so that we know
+         * which row and col of the Y and J matrices to stamp.
+         * @type {number}
+         */
+        this.vSourceNum = 0;
+    }
+
+    /**
+     * Stamps the matrices Y and J
+     * @param {Matrix} matrixY 
+     * @param {Matrix} matrixJ
+     */
+    stamp(matrixY: Matrix, matrixJ: Matrix): void {
+        const [from, to] = this.nodes,
+            vSourceIndex = matrixY.data.length - this.vSourceNum;
+
+        matrixY.data[vSourceIndex][from] = matrixY.data[from][vSourceIndex] = 1;
+        matrixY.data[vSourceIndex][to] = matrixY.data[to][vSourceIndex] = -1;
+
+        matrixJ.data[vSourceIndex][0] = this.controlled.V
+    }
+
+    /**
+     * Updates this component&apos;s dependant values and pins&apos; voltage.
+     * Called from CircuitUpdater update() method
+     * @param {Object} value 
+     */
+    update(value: Object): void {
+        this.dependant.I = value.I;
+        this.pins[0].V = value.pins[0];
+        this.pins[1].V = value.pins[1];
+    }
+}
+
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

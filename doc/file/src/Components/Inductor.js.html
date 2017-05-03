@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/Components/Inductor.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/seckwei/Circuit-Simulator" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Board.js~Board.html">Board</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/CircuitUpdater.js~CircuitUpdater.html">CircuitUpdater</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Matrix.js~Matrix.html">Matrix</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Solver.js~Solver.html">Solver</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Traverser.js~Traverser.html">Traverser</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">Components</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Capacitor.js~Capacitor.html">Capacitor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Component.js~Component.html">Component</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/CurrentSource.js~CurrentSource.html">CurrentSource</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Ground.js~Ground.html">Ground</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Inductor.js~Inductor.html">Inductor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Pin.js~Pin.html">Pin</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Resistor.js~Resistor.html">Resistor</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/VoltageSource.js~VoltageSource.html">VoltageSource</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/Components/Wire.js~Wire.html">Wire</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/Components/Inductor.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+
+import Component from &apos;./Component.js&apos;;
+import Pin from &apos;./Pin.js&apos;;
+import ComponentType from &apos;../ComponentType.js&apos;;
+
+/**
+ * Utilising Norton Companion Model and Trapezoidal Approximation
+ * for Transient Analysis
+ */
+export default class Inductor extends Component {
+
+    constructor(initInductance: number = 1) {
+        super(&apos;L&apos;);
+        this.type = ComponentType.TYPE_INDUCTOR;
+        this.controlled = { L: initInductance };
+        this.dependant = {
+            // Initial state
+            I: 0,
+            V: 0,
+            // Companion model&apos;s values
+            companionG: undefined,
+            companionI: undefined
+        };
+        this.pins = [new Pin(this, 0), new Pin(this, 1)];
+    }
+
+    /**
+     * Stamps the Y and J matrices
+     * @param {Matrix} matrixY 
+     * @param {Matrix} matrixJ
+     * @param {Object} simConfig
+     */
+    stamp(matrixY: Matrix, matrixJ: Matrix, simConfig: Object): void {
+
+        if(this.dependant.companionG == undefined) {
+            this.dependant.companionG = simConfig.timestep / (2 * this.controlled.L);
+        }
+        this.dependant.companionI = this.dependant.I + this.dependant.companionG * this.dependant.V;
+
+        const [from, to] = this.nodes;
+
+        // Stamp the conductance for the companion model&apos;s resistor
+        matrixY.data[to][to]     += this.dependant.companionG;
+        matrixY.data[from][from] += this.dependant.companionG;
+        matrixY.data[to][from]   += -this.dependant.companionG;
+        matrixY.data[from][to]   += -this.dependant.companionG;
+
+        // Stamp the current for the companion model&apos;s current source
+        // The curren source is opposite direction of Capacitor&apos;s
+        matrixJ.data[from][0] += -this.dependant.companionI;
+        matrixJ.data[to][0]   += this.dependant.companionI;
+    }
+
+    /**
+     * Updates this component&apos;s dependant values and pins&apos; voltage.
+     * Called from CircuitUpdater update() method
+     * @param {Object} value 
+     */
+    update(value: Object): void {
+        let [p0, p1] = value.pins;
+
+        this.pins[0].V = p0;
+        this.pins[1].V = p1;
+
+        this.dependant.V = p0 - p1;
+        this.dependant.I = (this.dependant.V * this.dependant.companionG) + this.dependant.companionI;
+    }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
