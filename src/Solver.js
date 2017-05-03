@@ -10,6 +10,7 @@ import Numeric from 'numericjs';
 export default class Solver {
 
     simConfig: Object;
+    LU_Y: Object;
 
     constructor(simConfig: Object) {
         /**
@@ -17,6 +18,12 @@ export default class Solver {
          * @type {Object}
          */
         this.simConfig = simConfig;
+
+        /**
+         * Stores the LU decomposed Y matrix result object
+         * @type {Object}
+         */
+        this.LU_Y = undefined;
     }
 
     /**
@@ -76,16 +83,20 @@ export default class Solver {
 
         this.stampMatrices(components, Y, J);
 
-        // Remove the 0-th row and column because we don't need Ground nodes
-        Y.data.splice(0,1);
-        for(let row in Y.data) {
-            Y.data[row] = Y.data[row].splice(1, Y.data[row].length);
+        if(this.LU_Y == undefined) {
+
+            // Remove the 0-th row and column because we don't need Ground nodes
+            Y.data.splice(0,1);
+            for(let row in Y.data) {
+                Y.data[row] = Y.data[row].splice(1, Y.data[row].length);
+            }
+            this.LU_Y = Numeric.LU(Y.data);
         }
         // Same as above for matrix J
         J.data.splice(0,1);
 
         // Start with 0, which is the voltage of the 0th/ground node
-        return [0].concat(...Numeric.solve(Y.data, J.data));
+        return [0].concat(...Numeric.LUsolve(this.LU_Y, J.data));
     }
 }
 
