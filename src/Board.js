@@ -53,6 +53,9 @@ export default class Board {
                 this.grid[pos[0]] = [];
             }
             this.grid[pos[0]][pos[1]] = (this.grid[pos[0]][pos[1]] || []).concat(component.pins[index]);
+
+            // This means Pins and Grid share the same array of pins
+            // i.e. deleting from Pins will delete from Grid too, and vice versa
             this.pins[pos.toString()] = this.grid[pos[0]][pos[1]];
         }
 
@@ -67,14 +70,16 @@ export default class Board {
     remove(id: string): void {
         let toRemove: component = this.components[id];
 
+        // Get the array of pin positions from the component
         let pinPositions = toRemove.pins.map(pin => {
             let pos = pin.position.slice();
             pin.position = null;
             return pos;
         });
 
+        // Remove the pins from the grid
         pinPositions.forEach(pos => {
-            let pinIndex = -1,
+            let pinIndex = -1, 
                 pinArray = this.grid[pos[0]][pos[1]];
             for(let index in pinArray) {
                 if(pinArray[index].parent.id === toRemove.id) {

@@ -5,7 +5,8 @@ import ComponentType from './ComponentType.js';
 import Numeric from 'numericjs';
 
 /**
- * Solves the circuit
+ * Solver class of the simulator.
+ * Creates the matrices and initiates the stamping, and solve using NumericJS' LUsolve method.
  */
 export default class Solver {
 
@@ -20,7 +21,7 @@ export default class Solver {
         this.simConfig = simConfig;
 
         /**
-         * Stores the LU decomposed Y matrix result object
+         * Stores the LU decomposed Y matrix result object from Numeric.LU()
          * @type {Object}
          */
         this.LU_Y = undefined;
@@ -28,20 +29,18 @@ export default class Solver {
 
     /**
      * Gets the number of voltage sources
-     * @param {Pin[][]} nodes 
+     * @param {BoardComponents} components 
      * 
      * @returns {number}
      */
-    getNumVSource(nodes: Pin[][]): number {
-        let vSourceCount = {};
-        nodes.forEach(node => {
-            node.forEach(pin => {
-                if(pin.parent.vSourceNum !== undefined) {
-                    vSourceCount[pin.parent.id] = 0;
-                }
-            })
-        });
-        return Object.keys(vSourceCount).length;
+    getNumVSource(components: BoardComponents): number {
+        let vSourceCount = 0;
+        for(let id in components) {
+            if('vSourceNum' in components[id]) {
+                ++vSourceCount;
+            }
+        }
+        return vSourceCount;
     }
 
     /**
@@ -76,7 +75,7 @@ export default class Solver {
      */
     solve(components: BoardComponents, nodes: Pin[][]): number[] {
         let numNode = nodes.length,
-            numVSource = this.getNumVSource(nodes);
+            numVSource = this.getNumVSource(components);
 
         let Y = new Matrix(numNode + numVSource),
             J = new Matrix(numNode + numVSource, 1);

@@ -6,4 +6,12 @@ import Resistor from './Resistor.js';
 import Ground from './Ground.js';
 import Wire from './Wire.js';
 
-export { VoltageSource, CurrentSource, Resistor, Ground, Wire, Capacitor, Inductor };
+export {
+    VoltageSource,
+    CurrentSource,
+    Capacitor,
+    Inductor,
+    Resistor,
+    Ground,
+    Wire,
+};

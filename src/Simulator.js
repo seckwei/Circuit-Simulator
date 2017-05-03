@@ -5,49 +5,33 @@ import Board from './Board';
 import Traverser from './Traverser';
 import Solver from './Solver';
 import CircuitUpdater from './CircuitUpdater';
-import SimConfig from '../src/SimulationConfig.js';
+import SimConfig from './SimulationConfig';
 import { VoltageSource, CurrentSource, Wire, Inductor, Capacitor, Ground, Resistor } from './Components';
 
-let max = SimConfig.maxIteration,
-    fileData = '';
+import RLC_circuit from '../circuits/RLC';
 
-const B = new Board();
+let maxIterations = SimConfig.maxTime / SimConfig.timestep,
+    time = 0,
+    fileData = '',
+    solution = [];
 
-let V = new VoltageSource(5),
-    I = new Inductor(10),
-    R = new Resistor(10),
-    C = new Capacitor(1e-6),
-    GND = new Ground();
+// Save references for later use
+let B = RLC_circuit.board,
+    C = RLC_circuit.components.C;
 
-B.add(V, [[10,0], [10,10]]);
-B.add(GND, [[10,10], [10,15]]);
-B.add(R, [[10,0], [0,0]]);
-B.add(C, [[0,0], [0,10]]);
-B.add(I, [[0,10], [10,10]]);
-
+// Simulation starts here
 let nodes = Traverser.assignComponentNodes(B.pins),
     solver = new Solver(SimConfig);
 
-fs.writeFile('data.csv', '');
+while(maxIterations--) {
+    solution = solver.solve(B.components, nodes);
 
-while(max--) {
-    let solution = solver.solve(B.components, nodes);
+    // Store all the data first, then execute only one file write later
+    fileData += `${time}, ${C.dependant.I}, ${C.dependant.V}\n`;
 
-    // Inductor V and I, Capacitor V and I
-    fileData += `${C.dependant.V}, ${C.dependant.I}, ${I.dependant.V}, ${I.dependant.I}, ${C.pins[1].V}\n`;
     CircuitUpdater.update(CircuitUpdater.getUpdateObject(nodes, solution));
+    
+    time += SimConfig.timestep;
 }
 
-fs.appendFile('data.csv', fileData);
-
-/**
- * Simulator.board  // Pre initialised Board
- * 
- * // Simulation Configuration, initially pulled in from SimulationConfig
- * Simulator.config
- * Simulator.config.setTimestep()
- * 
- * Simulator.start()
- * Simulator.pause()
- * Simulator.reset()
- */
+fs.writeFile('RLC.csv', fileData);

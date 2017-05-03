@@ -74,7 +74,7 @@ describe('Inductor', () => {
             // we can do the Trapezoidal rule to approximate the next timestep's value
             L2 = new Inductor(inductance),
             // Companion model's resistor's conductance
-            companionG = simConfig.timestep / 2 * inductance;
+            companionG = simConfig.timestep / (2 * inductance);
 
         beforeEach(() => {
             Y = new Matrix(3);      // 3x3
