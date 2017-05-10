@@ -1,9 +1,8 @@
 <html>
 
 <head>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="result_RLC.js"></script>
+    <script src="js/highcharts.js"></script>
+    <script src="data/result_RLC.js"></script>
 
     <style>
         .container {
@@ -21,7 +20,7 @@
             chartDivs += `<div id="chart${i}"></div>`;
         }
 
-        $('#main').html(chartDivs);
+        document.getElementById('main').innerHTML = chartDivs;
 
         for (let i = 0; i < numChart; ++i) {
             Highcharts.chart(`chart${i}`, {
@@ -29,7 +28,7 @@
                     type: 'scatter',
                     zoomType: 'xy'
                 },
-                tite: { text: titles[i] },
+                title: { text: titles[i] },
                 series: [{
                     type: 'spline',
                     lineWidth: 1,

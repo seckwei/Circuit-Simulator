@@ -11,24 +11,27 @@ export function Builder(circuit) {
             return obj.probes.map(probe => {
                 return probe[0][probe[1]];
             });
-        }
+        },
+        op: circuit.op
     };
 
     circuit.components.forEach(entry => {
         let [id, pos1, pos2, val] = entry.split(' '),
             component;
 
+        let symbol = id.split('')[0];
+
         pos1 = parseInt(pos1);
         pos2 = parseInt(pos2);
         val = parseFloat(val);
 
-        switch (id.toUpperCase()) {
+        switch (symbol.toUpperCase()) {
             case 'V': component = new VoltageSource(val); break;
             case 'R': component = new Resistor(val); break;
             case 'C': component = new Capacitor(val); break;
             case 'L': component = new Inductor(val); break;
             case 'W': component = new Wire(); break;
-            case 'GND': component = new Ground(); break;
+            case 'G': component = new Ground(); break;
             default: throw new Error('No such component symbol!');
         }
 
