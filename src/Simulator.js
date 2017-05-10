@@ -7,7 +7,7 @@ import CircuitUpdater from './CircuitUpdater';
 import SimConfig from './SimulationConfig';
 import { Builder } from './Builder';
 
-import circuit from '../circuits/demo_R';
+import circuit from '../circuits/demo_RLC2';
 
 let maxIterations = SimConfig.maxTime / SimConfig.timestep,
     time = 0,

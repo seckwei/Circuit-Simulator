@@ -45,6 +45,6 @@ export default class CurrentSource extends Component {
         this.pins[0].V = p0;
         this.pins[1].V = p1;
         
-        this.dependant.V = Math.abs(p0 - p1);
+        this.dependant.V = p0 - p1;
     }
 }
