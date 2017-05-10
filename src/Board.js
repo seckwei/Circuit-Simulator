@@ -6,7 +6,7 @@
 export default class Board {
 
     components: {string: Component};
-    grid: Pin[][][];
+    grid: Pin[][];
     pins: BoardPins;
 
     /**
@@ -20,7 +20,7 @@ export default class Board {
         this.components = {};
         /**
          * Grid which holds the pins of components
-         * @type {Pin[][][]}
+         * @type {Pin[][]}
          */
         this.grid = [];
         /**
@@ -38,7 +38,7 @@ export default class Board {
      * 
      * @returns {string} Newly added component's id
      */
-    add(component: Component, pinPositions: number[][]): string {
+    add(component: Component, pinPositions: number[]): string {
         this.components[component.id] = component;
 
         for(let index in component.pins) {
@@ -49,14 +49,14 @@ export default class Board {
             }
 
             component.pins[index].position = pos;
-            if(this.grid[pos[0]] === undefined) {
-                this.grid[pos[0]] = [];
+            if(this.grid[pos] === undefined) {
+                this.grid[pos] = [];
             }
-            this.grid[pos[0]][pos[1]] = (this.grid[pos[0]][pos[1]] || []).concat(component.pins[index]);
+            this.grid[pos] = (this.grid[pos] || []).concat(component.pins[index]);
 
             // This means Pins and Grid share the same array of pins
             // i.e. deleting from Pins will delete from Grid too, and vice versa
-            this.pins[pos.toString()] = this.grid[pos[0]][pos[1]];
+            this.pins[pos.toString()] = this.grid[pos];
         }
 
         return component.id;
@@ -68,7 +68,7 @@ export default class Board {
      * @param {string} component's ID
      */
     remove(id: string): void {
-        let toRemove: component = this.components[id];
+        let toRemove: Component = this.components[id];
 
         // Get the array of pin positions from the component
         let pinPositions = toRemove.pins.map(pin => {
@@ -80,7 +80,7 @@ export default class Board {
         // Remove the pins from the grid
         pinPositions.forEach(pos => {
             let pinIndex = -1, 
-                pinArray = this.grid[pos[0]][pos[1]];
+                pinArray = this.grid[pos];
             for(let index in pinArray) {
                 if(pinArray[index].parent.id === toRemove.id) {
                     pinIndex = index;

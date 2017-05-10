@@ -11,11 +11,11 @@ const components = {
     GND : new Ground()
 };
 
-B.add(components.V, [[10,0], [10,10]]);
-B.add(components.GND, [[10,10], [10,15]]);
-B.add(components.R, [[10,0], [0,0]]);
-B.add(components.C, [[0,0], [0,10]]);
-B.add(components.L, [[0,10], [10,10]]);
+B.add(components.V, [1, 0]);
+B.add(components.GND, [0, 4]);
+B.add(components.R, [1, 2]);
+B.add(components.C, [2, 3]);
+B.add(components.L, [3, 0]);
 
 const circuit = { board: B, components: components };
 

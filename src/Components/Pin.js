@@ -7,7 +7,7 @@ export default class Pin {
     
 	parent : Component
 	index : number
-	position : number[]|null
+	position : number|null
 	visited : boolean
     V: number
 
@@ -29,7 +29,7 @@ export default class Pin {
 		this.index = index;
         /**
          * Position on the board
-         * @type {number[][] | null} [position=null]
+         * @type {number | null} [position=null]
          */
         this.position = null;
         /**

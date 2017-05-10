@@ -1,14 +1,13 @@
 // @flow
 import fs from 'fs';
 
-import Board from './Board';
 import Traverser from './Traverser';
 import Solver from './Solver';
 import CircuitUpdater from './CircuitUpdater';
 import SimConfig from './SimulationConfig';
-import { VoltageSource, CurrentSource, Wire, Inductor, Capacitor, Ground, Resistor } from './Components';
+import { Builder } from './Builder';
 
-import RLC_circuit from '../circuits/RLC';
+import RLC_circuit from '../circuits/demo_RLC';
 
 let maxIterations = SimConfig.maxTime / SimConfig.timestep,
     time = 0,
@@ -16,22 +15,22 @@ let maxIterations = SimConfig.maxTime / SimConfig.timestep,
     solution = [];
 
 // Save references for later use
-let B = RLC_circuit.board,
-    C = RLC_circuit.components.C;
+let circuitObj = Builder(RLC_circuit);
 
 // Simulation starts here
-let nodes = Traverser.assignComponentNodes(B.pins),
+let nodes = Traverser.assignComponentNodes(circuitObj.board.pins),
     solver = new Solver(SimConfig);
 
-while(maxIterations--) {
-    solution = solver.solve(B.components, nodes);
+while (maxIterations--) {
+    solution = solver.solve(circuitObj.board.components, nodes);
 
     // Store all the data first, then execute only one file write later
-    fileData += `${time}, ${C.dependant.I}, ${C.dependant.V}\n`;
+    fileData += `${time},${circuitObj.readProbes()}\n`;
 
     CircuitUpdater.update(CircuitUpdater.getUpdateObject(nodes, solution));
-    
+
     time += SimConfig.timestep;
 }
 
-fs.writeFile('RLC.csv', fileData);
+//console.log(fileData);
+fs.writeFile('demo_RLC.csv', fileData);
