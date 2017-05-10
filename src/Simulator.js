@@ -11,11 +11,17 @@ import RLC_circuit from '../circuits/demo_RLC';
 
 let maxIterations = SimConfig.maxTime / SimConfig.timestep,
     time = 0,
-    fileData = '',
     solution = [];
 
 // Save references for later use
-let circuitObj = Builder(RLC_circuit);
+let circuitObj = Builder(RLC_circuit),
+    probeNum = circuitObj.probeTitles.length,
+    probeData = [],
+    probeResults;
+
+for (let i = 0; i < probeNum; ++i) {
+    probeData[i] = [];
+}
 
 // Simulation starts here
 let nodes = Traverser.assignComponentNodes(circuitObj.board.pins),
@@ -24,13 +30,17 @@ let nodes = Traverser.assignComponentNodes(circuitObj.board.pins),
 while (maxIterations--) {
     solution = solver.solve(circuitObj.board.components, nodes);
 
-    // Store all the data first, then execute only one file write later
-    fileData += `${time},${circuitObj.readProbes()}\n`;
+    probeResults = circuitObj.readProbes();
+    for (let i = 0; i < probeNum; ++i) {
+        probeData[i].push([time, probeResults[i]]);
+    }
 
     CircuitUpdater.update(CircuitUpdater.getUpdateObject(nodes, solution));
-
     time += SimConfig.timestep;
 }
 
-//console.log(fileData);
-fs.writeFile('demo_RLC.csv', fileData);
+//console.log(probeData.length, probeData[0].length);
+fs.writeFile('result_RLC.js', `
+    const titles = [${circuitObj.probeTitles}];
+    const results = ${JSON.stringify(probeData)};
+`);

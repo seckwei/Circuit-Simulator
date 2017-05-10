@@ -1,0 +1,43 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="result_RLC.js"></script>
+
+    <style>
+        .container {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" class="container"></div>
+    <script>
+        let numChart = titles.length,
+            chartDivs = '';
+        for (let i = 0; i < numChart; ++i) {
+            chartDivs += `<div id="chart${i}"></div>`;
+        }
+
+        $('#main').html(chartDivs);
+
+        for (let i = 0; i < numChart; ++i) {
+            Highcharts.chart(`chart${i}`, {
+                chart: {
+                    type: 'scatter',
+                    zoomType: 'xy'
+                },
+                tite: { text: titles[i] },
+                series: [{
+                    type: 'spline',
+                    lineWidth: 1,
+                    data: results[i]
+                }]
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -6,12 +6,11 @@ export function Builder(circuit) {
         board: new Board(),
         components: {},
         probes: [],
+        probeTitles: [],
         readProbes() {
-            let result = [];
-            obj.probes.forEach(probe => {
-                result.push(`${probe[0][probe[1]]}`);
+            return obj.probes.map(probe => {
+                return probe[0][probe[1]];
             });
-            return result.join(',');
         }
     };
 
@@ -44,11 +43,13 @@ export function Builder(circuit) {
                 pin = obj.board.grid[nodeNum][0];
 
             obj.probes.push([pin, 'V']);
+            obj.probeTitles.push(`'Node ${id} Voltage'`);
         }
         else {
             symbols = symbols.split(',');
             symbols.forEach(symbol => {
                 obj.probes.push([obj.board.components[obj.components[id]].dependant, symbol]);
+                obj.probeTitles.push(`'${id} - ${symbol}'`);
             });
         }
     });
