@@ -2,7 +2,7 @@
     "source": "./src",
     "includes": [".+\\.js$"],
     "excludes": ["(^|\\/|\\\\)_"],
-    "destination": "./doc",
+    "destination": "./docs",
     "plugins": [{"name" : "./node_modules/esdoc-flow-plugin"}],
     "access" : ["public", "protected"],
     "unexportIdentifier": true,
